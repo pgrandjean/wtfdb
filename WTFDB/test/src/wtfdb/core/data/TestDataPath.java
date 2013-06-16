@@ -147,7 +147,7 @@ public class TestDataPath
         
         DataPath path1 = new DataPath();
         
-        Assert.assertTrue(!path0.matches(path1));
+        Assert.assertTrue(path0.matches(path1));
         Assert.assertTrue(path1.matches(path0));
     }
 
@@ -174,7 +174,7 @@ public class TestDataPath
         DataPath path1 = new DataPath();
         path1.add("tata");
         
-        Assert.assertTrue(!path0.matches(path1));
+        Assert.assertTrue(path0.matches(path1));
         Assert.assertTrue(path1.matches(path0));
     }
 
@@ -221,7 +221,7 @@ public class TestDataPath
         path1.add("tata");
         path1.add("tete");
         
-        Assert.assertTrue(!path0.matches(path1));
+        Assert.assertTrue(path0.matches(path1));
         Assert.assertTrue(path1.matches(path0));
     }
 
@@ -238,7 +238,7 @@ public class TestDataPath
         path1.add("tata");
         path1.add("tete");
         
-        Assert.assertTrue(!path0.matches(path1));
+        Assert.assertTrue(path0.matches(path1));
         Assert.assertTrue(path1.matches(path0));
     }
 
@@ -256,7 +256,7 @@ public class TestDataPath
         path0.add(1);
         path1.add("tete");
         
-        Assert.assertTrue(!path0.matches(path1));
+        Assert.assertTrue(path0.matches(path1));
         Assert.assertTrue(path1.matches(path0));
     }
 }

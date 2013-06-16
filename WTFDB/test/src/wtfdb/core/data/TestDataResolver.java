@@ -1,6 +1,7 @@
 package wtfdb.core.data;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Vector;
 
 import org.junit.Assert;
@@ -9,16 +10,12 @@ import org.junit.Test;
 
 public class TestDataResolver
 {
-    private DataResolver resolver = null;
-    
     private byte[] raw = null;
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Before
     public void startUp() throws IOException
     {
-        resolver = new DataResolver();
-        
         // data0
         Data data0 = new Data();
         data0.set("boolean", true);
@@ -46,29 +43,34 @@ public class TestDataResolver
     @Test
     public void test00() throws IOException
     {
-        Object value = resolver.get(raw, "");
-        Assert.assertTrue(value == null);
+        byte[] res = DataVisitor.visit(raw, "");
+        Assert.assertNull(res);
     }
 
     @Test
     public void test01() throws IOException
     {
-        Object value = resolver.get(raw, "tata");
-        Assert.assertTrue(value == null);
+        byte[] res = DataVisitor.visit(raw, "tata");
+        Assert.assertNull(res);
     }
 
     @Test
     public void test02() throws IOException
     {
-        Object value = resolver.get(raw, "tata[1].tete");
-        Assert.assertTrue(value == null);
+        byte[] res = DataVisitor.visit(raw, "tata[1].tete");
+        Assert.assertNull(res);
     }
 
     @Test
     public void test03() throws IOException
     {
-        Object value = resolver.get(raw, "boolean");
-        Assert.assertTrue(value != null);
+        byte[] res = DataVisitor.visit(raw, "boolean");
+        
+        Assert.assertNotNull(res);
+        
+        Data data = DataSerializer.deserialize(res);
+        Object value = data.get("boolean");
+        
         Assert.assertEquals(Boolean.class, value.getClass());
         Assert.assertEquals(true, value);
     }
@@ -76,17 +78,48 @@ public class TestDataResolver
     @Test
     public void test04() throws IOException
     {
-        Object value = resolver.get(raw, "list[0]");
-        Assert.assertTrue(value != null);
-        Assert.assertEquals(Integer.class, value.getClass());
-        Assert.assertEquals(2, value);
+        byte[] res = DataVisitor.visit(raw, "list[0]");
+
+        Assert.assertNotNull(res);
+
+        Data data = DataSerializer.deserialize(res);
+        Object value = data.get("list");
+        
+        Assert.assertNotNull(value);
+        Assert.assertTrue(value instanceof List);
+        
+        List<?> list = (List<?>) value;
+
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals(Integer.class, list.get(0).getClass());
+        Assert.assertEquals(2, list.get(0));
     }
 
     @Test
     public void test05() throws IOException
     {
-        Object value = resolver.get(raw, "list[1].byte");
-        Assert.assertTrue(value != null);
+        byte[] res = DataVisitor.visit(raw, "list[1].byte");
+
+        Assert.assertNotNull(res);
+
+        Data data = DataSerializer.deserialize(res);
+        Object value = data.get("list");
+
+        Assert.assertNotNull(value);
+        Assert.assertTrue(value instanceof List);
+
+        List<?> list = (List<?>) value;
+
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals(Data.class, list.get(0).getClass());
+        
+        data = (Data) list.get(0);
+
+        Assert.assertEquals(1, data.size());
+        
+        value = data.get("byte");
+
+        Assert.assertNotNull(value);
         Assert.assertEquals(Byte.class, value.getClass());
         Assert.assertEquals((byte) 1, value);
     }
@@ -94,8 +127,27 @@ public class TestDataResolver
     @Test
     public void test06() throws IOException
     {
-        Object value = resolver.get(raw, "list[1]");
-        Assert.assertTrue(value != null);
+        byte[] res = DataVisitor.visit(raw, "list[1]");
+
+        Assert.assertNotNull(res);
+
+        Data data = DataSerializer.deserialize(res);
+        Object value = data.get("list");
+
+        Assert.assertNotNull(value);
+        Assert.assertTrue(value instanceof List);
+
+        List<?> list = (List<?>) value;
+        
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals(Data.class, list.get(0).getClass());
+        
+        data = (Data) list.get(0);
+
+        Assert.assertEquals(1, data.size());
+        
+        value = data.get("byte");
+
         Assert.assertEquals(Byte.class, value.getClass());
         Assert.assertEquals((byte) 1, value);
     }
@@ -103,8 +155,35 @@ public class TestDataResolver
     @Test
     public void test07() throws IOException
     {
-        Object value = resolver.get(raw, "list");
-        Assert.assertTrue(value != null);
+        byte[] res = DataVisitor.visit(raw, "list");
+
+        Assert.assertNotNull(res);
+
+        Data data = DataSerializer.deserialize(res);
+        Object value = data.get("list");
+
+        Assert.assertNotNull(value);
+        Assert.assertTrue(value instanceof List);
+
+        List<?> list = (List<?>) value;
+        
+        Assert.assertEquals(2, list.size());
+        
+        value = list.get(0);
+        
+        Assert.assertEquals(Integer.class, value.getClass());
+        Assert.assertEquals(2, value);
+        
+        value = list.get(1);
+
+        Assert.assertEquals(Data.class, value.getClass());
+        
+        data = (Data) value;
+
+        Assert.assertEquals(1, data.size());
+        
+        value = data.get("byte");
+
         Assert.assertEquals(Byte.class, value.getClass());
         Assert.assertEquals((byte) 1, value);
     }

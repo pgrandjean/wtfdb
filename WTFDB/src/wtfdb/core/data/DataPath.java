@@ -1,6 +1,5 @@
 package wtfdb.core.data;
 
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,8 +86,8 @@ public class DataPath implements Comparable<DataPath>
         int k = this.path.size();
         int l = that.path.size();
         
-        if (k > 0 && l == 0) return false; 
-        else if (k == 0 && l > 0 || k == 0 && l == 0) return true;
+//        if (k > 0 && l == 0) return false; 
+//        else if (k == 0 && l > 0 || k == 0 && l == 0) return true;
         
         int i = 0;
         int j = 0;
@@ -106,7 +105,7 @@ public class DataPath implements Comparable<DataPath>
             }
             else if (thisKey.getClass() == thatKey.getClass())
             {
-                // not equal but same class
+                // same class and not equal
                 return false;
             }
             else if (thisKey.getClass() == Integer.class)
@@ -123,7 +122,7 @@ public class DataPath implements Comparable<DataPath>
             }
         }
         
-        return i == k;
+        return i == k || j == l;
     }
     
     @Override

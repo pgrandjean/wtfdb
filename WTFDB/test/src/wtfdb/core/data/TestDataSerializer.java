@@ -71,16 +71,4 @@ public class TestDataSerializer
         data1.set("integer", null);
         Assert.assertTrue(!data0.equals(data1));
     }
-    
-    @Test
-    public void testSerialization() throws Exception
-    {
-        byte[] raw = DataSerializer.serialize(data0);
-        data1 = DataSerializer.deserialize(raw);
-        
-        DataVisitorTest dataResolver = new DataVisitorTest();
-        dataResolver.visit(raw);
-        
-        Assert.assertTrue(data0.equals(data1));
-    }
 }

@@ -1,136 +1,304 @@
 package wtfdb.core.data;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Date;
 
-public abstract class DataVisitor
+public class DataVisitor
 {   
-    public abstract boolean visit(DataPath path, Boolean value);
-
-    public abstract boolean visit(DataPath path, Byte value);
-
-    public abstract boolean visit(DataPath path, Short value);
-
-    public abstract boolean visit(DataPath path, Integer value);
-
-    public abstract boolean visit(DataPath path, Long value);
-
-    public abstract boolean visit(DataPath path, Float value);
-
-    public abstract boolean visit(DataPath path, Double value);
-
-    public abstract boolean visit(DataPath path, Character value);
-
-    public abstract boolean visit(DataPath path, String value);
-
-    public abstract boolean visit(DataPath path, byte[] value);
-
-    public abstract boolean visit(DataPath path, Date value);
-    
-    private boolean visit0(DataPath path, DataInputStream input) throws IOException
+    private DataVisitor()
     {
-        int type = input.readByte();
-        boolean cont = true;
         
+    }
+    
+    private static byte[] visit0(
+            DataPath targPath,
+            DataPath currPath,
+            DataInputStream input,
+            ByteArrayOutputStream buffer,
+            DataOutputStream serializer
+            ) throws IOException
+    {
+        boolean matches = targPath.matches(currPath);
+        
+        int type = input.readByte();
         switch (type)
         {
             case DataTypes.BOOLEAN:
-                if (cont) cont = visit(path, input.readBoolean());
-                break;
+            {
+                boolean value = input.readBoolean();
                 
-            case DataTypes.BYTE:
-                if (cont) cont = visit(path, input.readByte());
-                break;
-                
-            case DataTypes.SHORT:
-                if (cont) cont = visit(path, input.readShort());
-                break;
-                
-            case DataTypes.INTEGER:
-                if (cont) cont = visit(path, input.readInt());
-                break;
-                
-            case DataTypes.LONG:
-                if (cont) cont = visit(path, input.readLong());
-                break;
-                
-            case DataTypes.FLOAT:
-                if (cont) cont = visit(path, input.readFloat());
-                break;
-                
-            case DataTypes.DOUBLE:
-                if (cont) cont = visit(path, input.readDouble());
-                break;
-                
-            case DataTypes.CHAR:
-                if (cont) cont = visit(path, input.readChar());
-                break;
-                
-            case DataTypes.STRING:
-                if (cont) cont = visit(path, input.readUTF());
-                break;
-                
-            case DataTypes.ARRAY:
-                int vectorSize = input.readInt();
-                
-                for (int j = 0; j < vectorSize; j++)
+                if (matches)
                 {
-                    path.add(j);
-                    if (cont) cont = visit0(path, input);
-                    path.poll();
-
-                    if (!cont) break;
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.BOOLEAN);
+                    serializer.writeBoolean(value);
+                    return buffer.toByteArray();
                 }
                 
                 break;
+            }
+                
+            case DataTypes.BYTE:
+            {
+                byte value = input.readByte();
+
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.BYTE);
+                    serializer.writeByte(value);
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
+                
+            case DataTypes.SHORT:
+            {
+                short value = input.readShort();
+
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.SHORT);
+                    serializer.writeShort(value);
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
+                
+            case DataTypes.INTEGER:
+            {
+                int value = input.readInt();
+
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.INTEGER);
+                    serializer.writeInt(value);
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
+                
+            case DataTypes.LONG:
+            {
+                long value = input.readLong();
+
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.LONG);
+                    serializer.writeLong(value);
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
+            
+            case DataTypes.FLOAT:
+            {
+                float value = input.readFloat();
+
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.FLOAT);
+                    serializer.writeFloat(value);
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
+                
+            case DataTypes.DOUBLE:
+            {
+                double value = input.readDouble();
+
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.DOUBLE);
+                    serializer.writeDouble(value);
+                    return buffer.toByteArray();
+                }
+
+                break;
+            }
+                
+            case DataTypes.CHAR:
+            {
+                char value = input.readChar();
+
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.CHAR);
+                    serializer.writeChar(value);
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
+                
+            case DataTypes.STRING:
+            {
+                String value = input.readUTF();
+
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.STRING);
+                    serializer.writeUTF(value);
+                    return buffer.toByteArray();
+                }
+
+                break;
+            }
+
+            case DataTypes.BYTE_ARRAY:
+            {
+                int size = input.readInt();
+                byte[] bytes = new byte[size];
+                input.read(bytes, 0, size);
+                
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.BYTE_ARRAY);
+                    serializer.writeInt(size);
+                    serializer.write(bytes);
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
+                
+            case DataTypes.DATE:
+            {
+                long value = input.readLong();
+                
+                if (matches)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.DATE);
+                    serializer.writeLong(value);
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
+                
+            case DataTypes.ARRAY:
+            {
+                int size = input.readInt();
+                int count = 0;
+                
+                byte[][] list = new byte[size][];
+                for (int i = 0; i < size; i++)
+                {
+                    currPath.add(i);
+                    byte[] bytes = visit0(targPath, currPath, input, buffer, serializer);
+                    currPath.poll();
+                    
+                    if (bytes != null)
+                    {
+                        list[count++] = bytes;
+                    }
+                }
+                
+                if (count > 0)
+                {
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.ARRAY);
+                    serializer.writeInt(count);
+                    for (int i = 0; i < count; i++)
+                    {
+                        serializer.write(list[i]);
+                    }
+                    
+                    return buffer.toByteArray();
+                }
+                
+                break;
+            }
                 
             case DataTypes.DATA:
-                int dataSize = input.readInt();
+            {
+                int size = input.readInt();
+                int count = 0;
                 
-                for (int k = 0; k < dataSize; k++)
+                String[] k = new String[size];
+                byte[][] v = new byte[size][];
+                for (int i = 0; i < size; i++)
                 {
                     String key = input.readUTF();
                     
-                    path.add(key);
-                    if (cont) cont = visit0(path, input);
-                    path.poll();
-
-                    if (!cont) break;
+                    currPath.add(key);
+                    byte[] bytes = visit0(targPath, currPath, input, buffer, serializer);
+                    currPath.poll();
+                    
+                    if (bytes != null)
+                    {
+                        k[count] = key;
+                        v[count] = bytes;
+                        count++;
+                    }
                 }
                 
-                break;
-
-            case DataTypes.BYTE_ARRAY:
-                int arraySize = input.readInt();
-                byte[] bytes = new byte[arraySize];
-                
-                for (int k = 0; k < arraySize; k++)
+                if (count > 0)
                 {
-                    bytes[k] = input.readByte();
+                    buffer.reset();
+                    serializer.writeByte(DataTypes.DATA);
+                    serializer.writeInt(count);
+                    for (int i = 0; i < count; i++)
+                    {
+                        serializer.writeUTF(k[i]);
+                        serializer.write(v[i]);
+                    }
+
+                    return buffer.toByteArray();
                 }
                 
-                if (cont) cont = visit(path, bytes);
                 break;
-                
-            case DataTypes.DATE:
-                long date = input.readLong();
-                if (cont) cont = visit(path, new Date(date));
-                break;
-                
+            }
+
             default:
                 throw new IOException("unknown type: " + type);
         }
         
-        return cont;
+        return null;
     }
     
-    public final void visit(byte[] raw) throws IOException
+    public static byte[] visit(byte[] raw, String path) throws IOException
     {
+        if (raw == null) return null;
+        if (path == null) return null;
+        if (raw.length == 0) return null;
+
+        DataPath targPath = DataPath.valueOf(path);
+        if (targPath == null) return null;
+        
         ByteArrayInputStream input = new ByteArrayInputStream(raw);
-        DataInputStream dataInput = new DataInputStream(input);
-       
-        visit0(new DataPath(), dataInput);
+        DataInputStream inputData = new DataInputStream(input);
+        
+        ByteArrayOutputStream output = new ByteArrayOutputStream(raw.length);
+        DataOutputStream outputData = new DataOutputStream(output);
+
+        DataPath currPath = new DataPath();
+        byte[] res = visit0(
+                targPath, 
+                currPath,
+                inputData, 
+                output, 
+                outputData
+                );
+        
+        return res;
     }
 }

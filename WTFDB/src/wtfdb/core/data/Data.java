@@ -3,10 +3,9 @@ package wtfdb.core.data;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-public class Data implements Iterable<Entry<String, Object>>
+public class Data implements Iterable<String>
 {
     private Map<String, Object> fields = new LinkedHashMap<String, Object>();
     
@@ -21,22 +20,25 @@ public class Data implements Iterable<Entry<String, Object>>
     }
     
     @Override
-    public boolean equals(Object that)
+    public boolean equals(Object o)
     {
-        if (that == null) return false;
+        if (o == null) return false;
         
-        if (!getClass().equals(that.getClass())) return false;
+        if (!getClass().equals(o.getClass())) return false;
         
-        Data thatData = (Data) that;
-        Set<String> thisKeys = fields.keySet();
-        Set<String> thatKeys = thatData.fields.keySet();
+        Data that = (Data) o;
+        Set<String> thisKeys = this.fields.keySet();
+        Set<String> thatKeys = that.fields.keySet();
         
         if (!thisKeys.containsAll(thatKeys) || !thatKeys.containsAll(thisKeys)) return false;
         
         boolean equals = true;
-        for (Entry<String, Object> entry : this)
+        for (String key : this)
         {
-            equals = equals && fields.get(entry.getKey()).equals(entry.getValue());
+            Object thisValue = this.get(key);
+            Object thatValue = that.get(key);
+            
+            equals = equals && thisValue.equals(thatValue);
             if (!equals) break;
         }
         
@@ -44,9 +46,9 @@ public class Data implements Iterable<Entry<String, Object>>
     }
     
     @Override
-    public Iterator<Entry<String, Object>> iterator()
+    public Iterator<String> iterator()
     {
-        return fields.entrySet().iterator();
+        return fields.keySet().iterator();
     }
     
     public void set(String key, Object value)

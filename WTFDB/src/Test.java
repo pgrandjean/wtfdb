@@ -9,10 +9,9 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 
 import wtfdb.core.data.Data;
-import wtfdb.core.data.DataResolver;
 import wtfdb.core.data.DataSerializer;
 import wtfdb.core.data.DataTypes;
-
+import wtfdb.core.data.DataVisitor;
 
 public class Test
 {
@@ -120,12 +119,11 @@ public class Test
         double time = 0.0;
         
         byte[] raw = DataSerializer.serialize(data0);
-        DataResolver dataResolver = new DataResolver();
 
         for (int i = 0; i < 1000000; i++)
         {
             startTime = System.nanoTime();
-            Object o = dataResolver.get(raw, "list[1].byte");
+            byte[] bytes = DataVisitor.visit(raw, "list[1].byte");
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;

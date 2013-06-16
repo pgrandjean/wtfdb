@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 public class DataSerializer
 {
@@ -244,32 +243,6 @@ public class DataSerializer
                 output.writeUTF((String) value);
                 break;
 
-            case DataTypes.ARRAY:
-                List<?> list = (List<?>) value;
-                output.writeByte(DataTypes.ARRAY);
-                output.writeInt(list.size());
-                
-                for (Object o : list)
-                {
-                    serialize0(o, output);
-                }
-                break;
-
-            case DataTypes.DATA:
-                Data data = (Data) value;
-                output.writeByte(DataTypes.DATA);
-                output.writeInt(data.size());
-                
-                for (Entry<String, Object> entry : data)
-                {
-                    String key = entry.getKey();
-                    Object o = entry.getValue();
-                    
-                    output.writeUTF(key);
-                    serialize0(o, output);
-                }
-                break;
-
             case DataTypes.BYTE_ARRAY:
                 byte[] bytes = (byte[]) value;
                 output.writeByte(DataTypes.BYTE_ARRAY);
@@ -287,6 +260,31 @@ public class DataSerializer
                 output.writeLong(date.getTime());
                 break;
                 
+            case DataTypes.ARRAY:
+                List<?> list = (List<?>) value;
+                output.writeByte(DataTypes.ARRAY);
+                output.writeInt(list.size());
+                
+                for (Object o : list)
+                {
+                    serialize0(o, output);
+                }
+                break;
+
+            case DataTypes.DATA:
+                Data data = (Data) value;
+                output.writeByte(DataTypes.DATA);
+                output.writeInt(data.size());
+                
+                for (String key : data)
+                {
+                    output.writeUTF(key);
+                    
+                    Object o = data.get(key);
+                    serialize0(o, output);
+                }
+                break;
+
             default:
                 throw new IOException("unknown type: " + klass.getCanonicalName());
         }
@@ -335,6 +333,23 @@ public class DataSerializer
             case DataTypes.STRING:
                 o = input.readUTF();
                 break;
+
+            case DataTypes.BYTE_ARRAY:
+                int arraySize = input.readInt();
+                byte[] bytes = new byte[arraySize];
+                
+                for (int i = 0; i < arraySize; i++)
+                {
+                    bytes[i] = input.readByte();
+                }
+                
+                o = bytes;
+                break;
+                
+            case DataTypes.DATE:
+                long date = input.readLong();
+                o = new Date(date);
+                break;
                 
             case DataTypes.ARRAY:
                 int vectorSize = input.readInt();
@@ -363,23 +378,6 @@ public class DataSerializer
                 o = data;
                 break;
 
-            case DataTypes.BYTE_ARRAY:
-                int arraySize = input.readInt();
-                byte[] bytes = new byte[arraySize];
-                
-                for (int i = 0; i < arraySize; i++)
-                {
-                    bytes[i] = input.readByte();
-                }
-                
-                o = bytes;
-                break;
-                
-            case DataTypes.DATE:
-                long date = input.readLong();
-                o = new Date(date);
-                break;
-                
             default:
                 throw new IOException("unknown type: " + type);
         }
