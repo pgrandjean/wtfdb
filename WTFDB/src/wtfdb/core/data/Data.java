@@ -3,11 +3,17 @@ package wtfdb.core.data;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class Data implements Iterable<String>
 {
     private Map<String, Object> fields = new LinkedHashMap<String, Object>();
+    
+    protected Set<Entry<String, Object>> entrySet()
+    {
+        return fields.entrySet();
+    }
     
     public Object get(String key)
     {

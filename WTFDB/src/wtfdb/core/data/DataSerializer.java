@@ -7,6 +7,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Stack;
 import java.util.Vector;
 
 public class DataSerializer
@@ -186,6 +188,116 @@ public class DataSerializer
 //            throw new IOException("unknown type: " + klass.getCanonicalName());
 //        }
 //    }
+    @SuppressWarnings("unchecked")
+    protected static void serialize00(Data data, DataOutputStream output) throws IOException
+    {
+        if (data == null || data.size() == 0) return;
+        
+        Stack<Object> stack = new Stack<>();
+        stack.add(data);
+        
+        Object value = null;
+        Class<?> klass = null;
+        Byte type = null;
+        
+        while (!stack.empty())
+        {
+            value = stack.pop();
+
+            if (value instanceof Entry)
+            {
+                Entry<String, Object> entry = (Entry<String, Object>) value;
+                output.writeUTF(entry.getKey());
+                
+                value = entry.getValue();
+            }
+            
+            klass = value.getClass();
+            type = DataTypes.getType(klass);
+            if (type == null)
+            {
+                throw new IOException("unknown type: " + klass.getCanonicalName());
+            }
+            
+            switch (type)
+            {
+                case DataTypes.BOOLEAN:
+                    output.writeByte(DataTypes.BOOLEAN);
+                    output.writeBoolean((boolean) value);
+                    break;
+
+                case DataTypes.BYTE:
+                    output.writeByte(DataTypes.BYTE);
+                    output.writeByte((byte) value);
+                    break;
+
+                case DataTypes.SHORT:
+                    output.writeByte(DataTypes.SHORT);
+                    output.writeShort((short) value);
+                    break;
+
+                case DataTypes.INTEGER:
+                    output.writeByte(DataTypes.INTEGER);
+                    output.writeInt((int) value);
+                    break;
+
+                case DataTypes.LONG:
+                    output.writeByte(DataTypes.LONG);
+                    output.writeLong((long) value);
+                    break;
+
+                case DataTypes.FLOAT:
+                    output.writeByte(DataTypes.FLOAT);
+                    output.writeFloat((float) value);
+                    break;
+
+                case DataTypes.DOUBLE:
+                    output.writeByte(DataTypes.DOUBLE);
+                    output.writeDouble((double) value);
+                    break;
+
+                case DataTypes.CHAR:
+                    output.writeByte(DataTypes.CHAR);
+                    output.writeChar((char) value);
+                    break;
+
+                case DataTypes.STRING:
+                    output.writeByte(DataTypes.STRING);
+                    output.writeUTF((String) value);
+                    break;
+
+                case DataTypes.BYTE_ARRAY:
+                    byte[] bytes = (byte[]) value;
+                    output.writeByte(DataTypes.BYTE_ARRAY);
+                    output.writeInt(bytes.length);
+                    output.write(bytes);
+                    break;
+                    
+                case DataTypes.DATE:
+                    Date date = (Date) value;
+                    output.writeByte(DataTypes.DATE);
+                    output.writeLong(date.getTime());
+                    break;
+                    
+                case DataTypes.ARRAY:
+                    List<?> list = (List<?>) value;
+                    output.writeByte(DataTypes.ARRAY);
+                    output.writeInt(list.size());
+                    stack.addAll(list);
+                    break;
+
+                case DataTypes.DATA:
+                    data = (Data) value;
+                    output.writeByte(DataTypes.DATA);
+                    output.writeInt(data.size());
+                    stack.addAll(data.entrySet());
+                    break;
+
+                default:
+                    throw new IOException("unknown type: " + klass.getCanonicalName());
+            }
+        }
+    }
 
     protected static void serialize0(Object value, DataOutputStream output) throws IOException
     {
@@ -247,11 +359,7 @@ public class DataSerializer
                 byte[] bytes = (byte[]) value;
                 output.writeByte(DataTypes.BYTE_ARRAY);
                 output.writeInt(bytes.length);
-                
-                for (byte b : bytes)
-                {
-                    output.writeByte(b);
-                }
+                output.write(bytes);
                 break;
                 
             case DataTypes.DATE:
@@ -337,12 +445,7 @@ public class DataSerializer
             case DataTypes.BYTE_ARRAY:
                 int arraySize = input.readInt();
                 byte[] bytes = new byte[arraySize];
-                
-                for (int i = 0; i < arraySize; i++)
-                {
-                    bytes[i] = input.readByte();
-                }
-                
+                input.read(bytes, 0, arraySize);
                 o = bytes;
                 break;
                 
@@ -391,6 +494,17 @@ public class DataSerializer
         DataOutputStream dataOutput = new DataOutputStream(output);
         
         serialize0(data, dataOutput);
+        
+        // no need to flush nor close
+        return output.toByteArray();
+    }
+
+    public static byte[] serialize2(Data data) throws IOException
+    {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        DataOutputStream dataOutput = new DataOutputStream(output);
+        
+        serialize00(data, dataOutput);
         
         // no need to flush nor close
         return output.toByteArray();

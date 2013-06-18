@@ -1,4 +1,5 @@
-import java.io.ByteArrayInputStream;
+package wtfdb.core.data;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class Test
     
     private Data data1 = null;
     
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Test()
     {
         // data0
@@ -74,14 +76,13 @@ public class Test
         long totalTime = 0L;
         double time = 0.0;
         ByteArrayOutputStream output = null;
-        ByteArrayInputStream input = null;
         byte[] bytes = null;
         
         for (int i = 0; i < 1000000; i++)
         {
             output = new ByteArrayOutputStream();
             startTime = System.nanoTime();
-            bytes = DataSerializer.serialize(data0);
+            bytes = DataSerializer.serialize2(data0);
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
@@ -96,7 +97,6 @@ public class Test
         totalTime = 0L;
         for (int i = 0; i < 1000000; i++)
         {
-            input = new ByteArrayInputStream(raw);
             startTime = System.nanoTime();
             data1 = DataSerializer.deserialize(bytes);
             endTime = System.nanoTime();
@@ -107,9 +107,12 @@ public class Test
         time = (double) (totalTime);
         System.out.println("deserialization time: " + time / 1000000 / 1000000);
         
-        Assert.assertTrue(data0.equals(data1));
+//        Assert.assertTrue(data0.equals(data1));
     }
     
+    private String path = "list[1].byte";
+    
+    // parse raw return raw
     private void testResolver() throws IOException
     {
         long startTime = 0L;
@@ -119,11 +122,12 @@ public class Test
         double time = 0.0;
         
         byte[] raw = DataSerializer.serialize(data0);
+        DataVisitor visitor = new DataVisitor();
 
         for (int i = 0; i < 1000000; i++)
         {
             startTime = System.nanoTime();
-            byte[] bytes = DataVisitor.visit(raw, "list[1].byte");
+            byte[] bytes = visitor.visit(raw, path);
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
@@ -164,5 +168,4 @@ public class Test
         String[] split = "toto".split("\\.");
         System.out.println(split.length + " " + split[0]);
     }
-
 }

@@ -10,6 +10,8 @@ import org.junit.Test;
 
 public class TestDataResolver
 {
+    private DataVisitor visitor = new DataVisitor();
+    
     private byte[] raw = null;
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -43,28 +45,28 @@ public class TestDataResolver
     @Test
     public void test00() throws IOException
     {
-        byte[] res = DataVisitor.visit(raw, "");
+        byte[] res = visitor.visit(raw, "");
         Assert.assertNull(res);
     }
 
     @Test
     public void test01() throws IOException
     {
-        byte[] res = DataVisitor.visit(raw, "tata");
+        byte[] res = visitor.visit(raw, "tata");
         Assert.assertNull(res);
     }
 
     @Test
     public void test02() throws IOException
     {
-        byte[] res = DataVisitor.visit(raw, "tata[1].tete");
+        byte[] res = visitor.visit(raw, "tata[1].tete");
         Assert.assertNull(res);
     }
 
     @Test
     public void test03() throws IOException
     {
-        byte[] res = DataVisitor.visit(raw, "boolean");
+        byte[] res = visitor.visit(raw, "boolean");
         
         Assert.assertNotNull(res);
         
@@ -78,7 +80,7 @@ public class TestDataResolver
     @Test
     public void test04() throws IOException
     {
-        byte[] res = DataVisitor.visit(raw, "list[0]");
+        byte[] res = visitor.visit(raw, "list[0]");
 
         Assert.assertNotNull(res);
 
@@ -98,7 +100,7 @@ public class TestDataResolver
     @Test
     public void test05() throws IOException
     {
-        byte[] res = DataVisitor.visit(raw, "list[1].byte");
+        byte[] res = visitor.visit(raw, "list[1].byte");
 
         Assert.assertNotNull(res);
 
@@ -127,7 +129,7 @@ public class TestDataResolver
     @Test
     public void test06() throws IOException
     {
-        byte[] res = DataVisitor.visit(raw, "list[1]");
+        byte[] res = visitor.visit(raw, "list[1]");
 
         Assert.assertNotNull(res);
 
@@ -155,7 +157,7 @@ public class TestDataResolver
     @Test
     public void test07() throws IOException
     {
-        byte[] res = DataVisitor.visit(raw, "list");
+        byte[] res = visitor.visit(raw, "list");
 
         Assert.assertNotNull(res);
 

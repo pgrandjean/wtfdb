@@ -8,17 +8,20 @@ import java.io.IOException;
 
 public class DataVisitor
 {   
-    private DataVisitor()
+    private DataPath targPath = null;
+    
+    private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    
+    private DataOutputStream serializer = new DataOutputStream(buffer);
+    
+    public DataVisitor()
     {
         
     }
-    
-    private static byte[] visit0(
-            DataPath targPath,
+
+    private byte[] visit0(
             DataPath currPath,
-            DataInputStream input,
-            ByteArrayOutputStream buffer,
-            DataOutputStream serializer
+            DataInputStream input
             ) throws IOException
     {
         boolean matches = targPath.matches(currPath);
@@ -164,15 +167,15 @@ public class DataVisitor
             case DataTypes.BYTE_ARRAY:
             {
                 int size = input.readInt();
-                byte[] bytes = new byte[size];
-                input.read(bytes, 0, size);
+                byte[] value = new byte[size];
+                input.read(value, 0, size);
                 
                 if (matches)
                 {
                     buffer.reset();
                     serializer.writeByte(DataTypes.BYTE_ARRAY);
                     serializer.writeInt(size);
-                    serializer.write(bytes);
+                    serializer.write(value);
                     return buffer.toByteArray();
                 }
                 
@@ -203,7 +206,7 @@ public class DataVisitor
                 for (int i = 0; i < size; i++)
                 {
                     currPath.add(i);
-                    byte[] bytes = visit0(targPath, currPath, input, buffer, serializer);
+                    byte[] bytes = visit0(currPath, input);
                     currPath.poll();
                     
                     if (bytes != null)
@@ -240,7 +243,7 @@ public class DataVisitor
                     String key = input.readUTF();
                     
                     currPath.add(key);
-                    byte[] bytes = visit0(targPath, currPath, input, buffer, serializer);
+                    byte[] bytes = visit0(currPath, input);
                     currPath.poll();
                     
                     if (bytes != null)
@@ -275,28 +278,22 @@ public class DataVisitor
         return null;
     }
     
-    public static byte[] visit(byte[] raw, String path) throws IOException
+    public byte[] visit(byte[] raw, String path) throws IOException
     {
         if (raw == null) return null;
         if (path == null) return null;
         if (raw.length == 0) return null;
 
-        DataPath targPath = DataPath.valueOf(path);
+        targPath = DataPath.valueOf(path);
         if (targPath == null) return null;
         
         ByteArrayInputStream input = new ByteArrayInputStream(raw);
         DataInputStream inputData = new DataInputStream(input);
         
-        ByteArrayOutputStream output = new ByteArrayOutputStream(raw.length);
-        DataOutputStream outputData = new DataOutputStream(output);
-
         DataPath currPath = new DataPath();
         byte[] res = visit0(
-                targPath, 
                 currPath,
-                inputData, 
-                output, 
-                outputData
+                inputData
                 );
         
         return res;
