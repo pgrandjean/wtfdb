@@ -115,7 +115,7 @@ public class DataSerializer
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected static Object deserialize0(DataInputStream input) throws IOException
+    private Object deserialize0(DataInputStream input) throws IOException
     {
         Object o = null;
         

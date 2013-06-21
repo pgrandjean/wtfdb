@@ -259,4 +259,22 @@ public class TestDataPath
         Assert.assertTrue(path0.matches(path1));
         Assert.assertTrue(path1.matches(path0));
     }
+    
+    @Test
+    public void testHashCode()
+    {
+        DataPath path0 = new DataPath();
+        path0.add("tata");
+        path0.add(1);
+        path0.add(2);
+        path0.add("tete");
+
+        DataPath path1 = new DataPath();
+        path1.add("tata");
+        path1.add(1);
+        path1.add(2);
+        path1.add("tete");
+        
+        Assert.assertEquals(path0.hashCode(), path1.hashCode());
+    }
 }

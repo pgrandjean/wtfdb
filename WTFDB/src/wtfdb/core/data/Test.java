@@ -137,7 +137,8 @@ public class Test
         }
 
         time = (double) (totalTime);
-        System.out.println("solve time: " + time / 1000000 / 1000000);
+        System.out.println("solve time: " + time / 1_000_000 / 1_000_000 +
+                           " tps: " + 1 / time * 1_000_000 * 1_000_000 * 1_000);
     }
 
     /**

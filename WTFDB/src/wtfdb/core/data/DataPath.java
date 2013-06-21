@@ -179,6 +179,18 @@ public class DataPath implements Comparable<DataPath>
         return true;
     }
     
+    @Override
+    public int hashCode()
+    {
+        int hashcode = 1;
+        for (Object o : path)
+        {
+            hashcode += 31 * hashcode + o.hashCode(); 
+        }
+        
+        return hashcode;
+    }
+    
     public boolean matches(DataPath that)
     {
         if (that == null) return false;
