@@ -284,7 +284,7 @@ public class DataVisitor
         if (path == null) return null;
         if (raw.length == 0) return null;
 
-        targPath = DataPath.valueOf(path);
+        targPath = new DataPath(path);
         if (targPath == null) return null;
         
         ByteArrayInputStream input = new ByteArrayInputStream(raw);

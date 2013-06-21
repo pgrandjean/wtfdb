@@ -55,13 +55,13 @@ public abstract class DataTypes
         bytes.put(Data.class, DATA);
     }
     
-    public static Byte getType(Class<?> klass)
-    {
-        return bytes.get(klass);
-    }
-    
     private DataTypes()
     {
         
+    }
+
+    public static Byte getType(Class<?> klass)
+    {
+        return bytes.get(klass);
     }
 }

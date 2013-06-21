@@ -10,6 +10,8 @@ import org.junit.Test;
 
 public class TestDataResolver
 {
+    private DataSerializer serializer = new DataSerializer();
+    
     private DataVisitor visitor = new DataVisitor();
     
     private byte[] raw = null;
@@ -39,16 +41,23 @@ public class TestDataResolver
         data0.set("list", list0);
         data0.set("data", subData0);
 
-        raw = DataSerializer.serialize(data0);
+        raw = serializer.serialize(data0);
     }
     
     @Test
     public void test00() throws IOException
     {
-        byte[] res = visitor.visit(raw, "");
+        byte[] res = visitor.visit(raw, null);
         Assert.assertNull(res);
     }
 
+    @Test
+    public void test001() throws IOException
+    {
+        byte[] res = visitor.visit(raw, "");
+        Assert.assertNotNull(res);
+    }
+    
     @Test
     public void test01() throws IOException
     {
@@ -70,7 +79,7 @@ public class TestDataResolver
         
         Assert.assertNotNull(res);
         
-        Data data = DataSerializer.deserialize(res);
+        Data data = serializer.deserialize(res);
         Object value = data.get("boolean");
         
         Assert.assertEquals(Boolean.class, value.getClass());
@@ -84,7 +93,7 @@ public class TestDataResolver
 
         Assert.assertNotNull(res);
 
-        Data data = DataSerializer.deserialize(res);
+        Data data = serializer.deserialize(res);
         Object value = data.get("list");
         
         Assert.assertNotNull(value);
@@ -104,7 +113,7 @@ public class TestDataResolver
 
         Assert.assertNotNull(res);
 
-        Data data = DataSerializer.deserialize(res);
+        Data data = serializer.deserialize(res);
         Object value = data.get("list");
 
         Assert.assertNotNull(value);
@@ -133,7 +142,7 @@ public class TestDataResolver
 
         Assert.assertNotNull(res);
 
-        Data data = DataSerializer.deserialize(res);
+        Data data = serializer.deserialize(res);
         Object value = data.get("list");
 
         Assert.assertNotNull(value);
@@ -161,7 +170,7 @@ public class TestDataResolver
 
         Assert.assertNotNull(res);
 
-        Data data = DataSerializer.deserialize(res);
+        Data data = serializer.deserialize(res);
         Object value = data.get("list");
 
         Assert.assertNotNull(value);

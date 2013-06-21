@@ -78,11 +78,13 @@ public class Test
         ByteArrayOutputStream output = null;
         byte[] bytes = null;
         
+        DataSerializer serializer = new DataSerializer();
+        
         for (int i = 0; i < 1000000; i++)
         {
             output = new ByteArrayOutputStream();
             startTime = System.nanoTime();
-            bytes = DataSerializer.serialize2(data0);
+            bytes = serializer.serialize(data0);
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
@@ -98,7 +100,7 @@ public class Test
         for (int i = 0; i < 1000000; i++)
         {
             startTime = System.nanoTime();
-            data1 = DataSerializer.deserialize(bytes);
+            data1 = serializer.deserialize(bytes);
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
@@ -107,7 +109,7 @@ public class Test
         time = (double) (totalTime);
         System.out.println("deserialization time: " + time / 1000000 / 1000000);
         
-//        Assert.assertTrue(data0.equals(data1));
+        Assert.assertTrue(data0.equals(data1));
     }
     
     private String path = "list[1].byte";
@@ -121,7 +123,8 @@ public class Test
         long totalTime = 0L;
         double time = 0.0;
         
-        byte[] raw = DataSerializer.serialize(data0);
+        DataSerializer serializer = new DataSerializer();
+        byte[] raw = serializer.serialize(data0);
         DataVisitor visitor = new DataVisitor();
 
         for (int i = 0; i < 1000000; i++)
@@ -154,7 +157,6 @@ public class Test
         System.out.println(Integer.valueOf(keyMatcher.group(2)));
         
         byte[] a = new byte[3];
-        Class<?> byteClass = a.getClass();
         System.out.println(a.getClass());
         
         ByteArrayOutputStream output = new ByteArrayOutputStream();
