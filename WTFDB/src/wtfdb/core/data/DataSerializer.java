@@ -7,13 +7,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 public class DataSerializer
 {
-    private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    private ByteArrayInputStream input = null;
     
-    private DataOutputStream serializer = new DataOutputStream(buffer);
+    private DataInputStream deserializer = null;
+    
+    private ByteArrayOutputStream output = null;
+    
+    private DataOutputStream serializer = null;
     
     private void serialize0(Object value) throws IOException
     {
@@ -93,6 +98,7 @@ public class DataSerializer
                 {
                     serialize0(o);
                 }
+                
                 break;
 
             case DataTypes.DATA:
@@ -100,96 +106,99 @@ public class DataSerializer
                 serializer.writeByte(DataTypes.DATA);
                 serializer.writeInt(data.size());
                 
-                for (String key : data)
+                for (Entry<String, Object> entry : data)
                 {
-                    serializer.writeUTF(key);
+                    serializer.writeUTF(entry.getKey());
                     
-                    Object o = data.get(key);
+                    Object o = entry.getValue();
                     serialize0(o);
                 }
+                
                 break;
 
             default:
                 throw new IOException("unknown type: " + klass.getCanonicalName());
         }
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Object deserialize0(DataInputStream input) throws IOException
+    private Object deserialize0() throws IOException
     {
         Object o = null;
+        int type = deserializer.readByte();
         
-        int type = input.readByte();
         switch (type)
         {
             case DataTypes.BOOLEAN:
-                o = input.readBoolean();
+                o = deserializer.readBoolean();
                 break;
                 
             case DataTypes.BYTE:
-                o = input.readByte();
+                o = deserializer.readByte();
                 break;
                 
             case DataTypes.SHORT:
-                o = input.readShort();
+                o = deserializer.readShort();
                 break;
                 
             case DataTypes.INTEGER:
-                o = input.readInt();
+                o = deserializer.readInt();
                 break;
                 
             case DataTypes.LONG:
-                o = input.readLong();
+                o = deserializer.readLong();
                 break;
                 
             case DataTypes.FLOAT:
-                o = input.readFloat();
+                o = deserializer.readFloat();
                 break;
                 
             case DataTypes.DOUBLE:
-                o = input.readDouble();
+                o = deserializer.readDouble();
                 break;
                 
             case DataTypes.CHAR:
-                o = input.readChar();
+                o = deserializer.readChar();
                 break;
                 
             case DataTypes.STRING:
-                o = input.readUTF();
+                o = deserializer.readUTF();
                 break;
 
             case DataTypes.BYTE_ARRAY:
-                int arraySize = input.readInt();
-                byte[] bytes = new byte[arraySize];
-                input.read(bytes, 0, arraySize);
+            {
+                int size = deserializer.readInt();
+                byte[] bytes = new byte[size];
+                deserializer.read(bytes, 0, size);
                 o = bytes;
                 break;
+            }
                 
             case DataTypes.DATE:
-                long date = input.readLong();
+                long date = deserializer.readLong();
                 o = new Date(date);
                 break;
                 
             case DataTypes.ARRAY:
-                int vectorSize = input.readInt();
+                int vectorSize = deserializer.readInt();
                 Vector vector = new Vector<>(vectorSize);
                 
                 for (int j = 0; j < vectorSize; j++)
                 {
-                    vector.add(deserialize0(input));
+                    vector.add(deserialize0());
                 }
                 
                 o = vector;
                 break;
                 
             case DataTypes.DATA:
-                int dataSize = input.readInt();
+                int dataSize = deserializer.readInt();
                 Data data = new Data();
                 
                 for (int k = 0; k < dataSize; k++)
                 {
-                    String key = input.readUTF();
-                    Object value = deserialize0(input);
+                    String key = deserializer.readUTF();
+                    Object value = deserialize0();
                     
                     data.set(key, value);
                 }
@@ -206,20 +215,20 @@ public class DataSerializer
 
     public byte[] serialize(Data data) throws IOException
     {
-        buffer.reset();
+        output = new ByteArrayOutputStream();
+        serializer = new DataOutputStream(output);
         
         serialize0(data);
         
         // no need to flush nor close
-        return buffer.toByteArray();
+        return output.toByteArray();
     }
 
-    public Data deserialize(byte[] bytes) throws IOException
+    public Data deserialize(byte[] raw) throws IOException
     {
-        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        DataInputStream dataInput = new DataInputStream(input);
-
-        // no need to close
-        return (Data) deserialize0(dataInput);
+        input = new ByteArrayInputStream(raw);
+        deserializer = new DataInputStream(input);
+        
+        return (Data) deserialize0();
     }
 }

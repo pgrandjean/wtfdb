@@ -3,9 +3,10 @@ package wtfdb.core.data;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-public class Data implements Iterable<String>
+public class Data implements Iterable<Entry<String, Object>>
 {
     private Map<String, Object> fields = new LinkedHashMap<String, Object>();
     
@@ -33,10 +34,10 @@ public class Data implements Iterable<String>
         if (!thisKeys.containsAll(thatKeys) || !thatKeys.containsAll(thisKeys)) return false;
         
         boolean equals = true;
-        for (String key : this)
+        for (Entry<String, Object> entry : this)
         {
-            Object thisValue = this.get(key);
-            Object thatValue = that.get(key);
+            Object thisValue = entry.getValue();
+            Object thatValue = that.get(entry.getKey());
             
             equals = equals && thisValue.equals(thatValue);
             if (!equals) break;
@@ -44,11 +45,11 @@ public class Data implements Iterable<String>
         
         return equals;
     }
-    
+
     @Override
-    public Iterator<String> iterator()
+    public Iterator<Entry<String, Object>> iterator()
     {
-        return fields.keySet().iterator();
+        return fields.entrySet().iterator();
     }
     
     public void set(String key, Object value)

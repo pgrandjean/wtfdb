@@ -25,6 +25,15 @@ public class Test
     {
         // data0
         data0 = new Data();
+
+        Data subData0 = new Data();
+        subData0.set("byte", (byte) 1);
+        
+        Vector list0 = new Vector<>();
+        list0.add(Integer.valueOf(2));
+        list0.add(subData0);
+        data0.set("list", list0);
+        
         data0.set("boolean", true);
         data0.set("byte", (byte) 1);
         data0.set("short", (short) 1);
@@ -35,17 +44,19 @@ public class Test
         data0.set("character", (char) 1);
         data0.set("string", "1");
         
-        Data subData0 = new Data();
-        subData0.set("byte", (byte) 1);
-        
-        Vector list0 = new Vector<>();
-        list0.add(Integer.valueOf(2));
-        list0.add(subData0);
-        data0.set("list", list0);
         data0.set("data", subData0);
         
         // data 1
         data1 = new Data();
+        
+        Data subData1 = new Data();
+        subData1.set("byte", (byte) 1);
+        
+        Vector list1 = new Vector<>();
+        list1.add(Integer.valueOf(2));
+        list1.add(subData1);
+        data1.set("list", list1);
+        
         data1.set("boolean", true);
         data1.set("byte", (byte) 1);
         data1.set("short", (short) 1);
@@ -56,16 +67,37 @@ public class Test
         data1.set("character", (char) 1);
         data1.set("string", "1");
         
-        Data subData1 = new Data();
-        subData1.set("byte", (byte) 1);
-        
-        Vector list1 = new Vector<>();
-        list1.add(Integer.valueOf(2));
-        list1.add(subData1);
-        data1.set("list", list1);
         data1.set("data", subData1);
     }
 
+    private Data newData()
+    {
+        // data0
+        Data data0 = new Data();
+
+        Data subData0 = new Data();
+        subData0.set("byte", (byte) 1);
+        
+        Vector list0 = new Vector<>();
+        list0.add(Integer.valueOf(2));
+        list0.add(subData0);
+        data0.set("list", list0);
+        
+        data0.set("boolean", true);
+        data0.set("byte", (byte) 1);
+        data0.set("short", (short) 1);
+        data0.set("integer", (int) 1);
+        data0.set("long", (long) 1);
+        data0.set("float", (float) 1);
+        data0.set("double", (double) 1);
+        data0.set("character", (char) 1);
+        data0.set("string", "1");
+        
+        data0.set("data", subData0);
+        
+        return data0;
+    }
+    
     private void testSerialization() throws Exception
     {
         DataTypes.getType(null);
@@ -75,14 +107,12 @@ public class Test
         long elapsedTime = 0L;
         long totalTime = 0L;
         double time = 0.0;
-        ByteArrayOutputStream output = null;
         byte[] bytes = null;
         
         DataSerializer serializer = new DataSerializer();
         
         for (int i = 0; i < 1000000; i++)
         {
-            output = new ByteArrayOutputStream();
             startTime = System.nanoTime();
             bytes = serializer.serialize(data0);
             endTime = System.nanoTime();
@@ -92,9 +122,7 @@ public class Test
         
         time = (double) (totalTime);
         System.out.println("serialization time: " + time / 1000000 / 1000000);
-        
-        byte[] raw = output.toByteArray();
-        System.out.println(raw.length);
+        System.out.println(bytes.length);
 
         totalTime = 0L;
         for (int i = 0; i < 1000000; i++)
@@ -112,7 +140,8 @@ public class Test
         Assert.assertTrue(data0.equals(data1));
     }
     
-    private String path = "list[1].byte";
+    private String path = "data";
+    private String path2 = "list";
     
     // parse raw return raw
     private void testResolver() throws IOException
@@ -126,11 +155,13 @@ public class Test
         DataSerializer serializer = new DataSerializer();
         byte[] raw = serializer.serialize(data0);
         DataVisitor visitor = new DataVisitor();
-
+        Data data = null;
+        
         for (int i = 0; i < 1000000; i++)
         {
+            data = newData();
             startTime = System.nanoTime();
-            byte[] bytes = visitor.visit(raw, path);
+            Data res = visitor.visit(data, path);
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;

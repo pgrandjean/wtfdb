@@ -1,6 +1,7 @@
 package wtfdb.core.data;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 public class DataFormatter
@@ -101,11 +102,11 @@ public class DataFormatter
         int size = data.size();
         int i = 0;
         
-        for (String key : data)
+        for (Entry<String, Object> entry : data)
         {
-            output.append(key).append(": ");
+            output.append(entry.getKey()).append(": ");
             
-            Object value = data.get(key);
+            Object value = entry.getValue();
             serialize(value, output);
             
             if (i != size - 1)
