@@ -32,8 +32,6 @@ public class DataPath implements Comparable<DataPath>
     
     private void init(String path)
     {
-        this.path.clear();
-        
         if (path == null || "".equals(path)) return;
         
         String[] split = path.split("\\.");
@@ -95,13 +93,31 @@ public class DataPath implements Comparable<DataPath>
         return path.get(i);
     }
 
-    protected void poll()
+    protected Object first()
+    {
+        return path.firstElement();
+    }
+    
+    protected Object dequeue()
     {
         int n = path.size();
         if (n > 0)
         {
-            path.remove(n - 1);
+            return path.remove(0);
         }
+        
+        return null;
+    }
+    
+    protected Object poll()
+    {
+        int n = path.size();
+        if (n > 0)
+        {
+            return path.remove(n - 1);
+        }
+        
+        return null;
     }
 
     protected int size()

@@ -1,120 +1,136 @@
 package wtfdb.core.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Vector;
 
 public class DataVisitor
 {   
-    private DataPath targPath = null;
-    
-    private DataPath currPath = null;
-    
     public DataVisitor()
     {
         
     }
-
-    @SuppressWarnings("unchecked")
-    private void visit0(Object o) throws IOException
+    
+    private Object read(Data root, DataPath path)
     {
-        Class<?> klass = o.getClass();
-        if (klass == Data.class)
+        Object curr = root;
+        
+        for (int i = 0; i < path.size() && curr != null; i++)
         {
-            Data data = (Data) o;
-            Iterator<Entry<String, Object>> it = data.iterator();
-            
-            while (it.hasNext())
+            Object key = path.get(i);
+
+            if (key instanceof String && curr instanceof Data)
             {
-                Entry<String, Object> entry = it.next();
-                currPath.add(entry.getKey());
-
-                boolean matches = targPath.matches(currPath);
-
-                if (matches) visit0(entry.getValue());
-                else it.remove();
-
-                currPath.poll();
+                curr = ((Data) curr).get((String) key);
             }
-        }
-        else if (klass == Vector.class)
-        {
-            List<Object> list = (Vector<Object>) o;
-            Iterator<Object> it = list.iterator();
-            
-            int i = 0;
-            while (it.hasNext())
+            else if (key instanceof Integer && curr instanceof List)
             {
-                currPath.add(i);
-
-                boolean matches = targPath.matches(currPath);
-                Object p = it.next();
+                @SuppressWarnings("unchecked")
+                List<Object> list = (List<Object>) curr;
+                Integer index = (Integer) key;
                 
-                if (matches) visit0(p);
-                else it.remove();
-                
-                currPath.poll();
-                i++;
+                if (index < list.size()) curr = list.get(index);
+                else curr = null;
             }
         }
         
-//        int type = DataTypes.getType(o.getClass());
-//        
-//        switch (type)
-//        {
-//            case DataTypes.ARRAY:
-//            {
-//                List<Object> list = (List<Object>) o;
-//                Iterator<Object> it = list.iterator();
-//                
-//                int i = 0;
-//                while (it.hasNext())
-//                {
-//                    currPath.add(i);
-//
-//                    boolean matches = targPath.matches(currPath);
-//                    Object p = it.next();
-//                    
-//                    if (matches) visit0(p);
-//                    else it.remove();
-//                    
-//                    currPath.poll();
-//                    i++;
-//                }
-//                
-//                return;
-//            }
-//                
-//            case DataTypes.DATA:
-//            {
-//                Data data = (Data) o;
-//                Iterator<Entry<String, Object>> it = data.iterator();
-//                
-//                while (it.hasNext())
-//                {
-//                    Entry<String, Object> entry = it.next();
-//                    currPath.add(entry.getKey());
-//
-//                    boolean matches = targPath.matches(currPath);
-//
-//                    if (matches) visit0(entry.getValue());
-//                    else it.remove();
-//
-//                    currPath.poll();
-//                }
-//                
-//                return;
-//            }
-//
-//            default:
-//                return;
-//        }
+        return curr;
+    }
+
+    private Object create(DataPath path, int index, Object value)
+    {
+        Object curr = value;
+        
+        int n = path.size();
+        for (int i = n - 1; i > index; i--)
+        {
+            Object k = path.get(i);
+            if (k instanceof String)
+            {
+                Data data = new Data();
+                data.set((String) k, curr);
+                
+                curr = data;
+            }
+            else if (k instanceof Integer)
+            {
+                List<Object> list = new Vector<>();
+                list.add(curr);
+                
+                curr = list;
+            }
+        }
+        
+        return curr;
+    }
+    
+    private Data update(Data root, DataPath path, Object value)
+    {
+        Object curr = root;
+        
+        int n = path.size();
+        for (int i = 0; i < n; i++)
+        {
+            Object key = path.get(i);
+            if (key instanceof String && curr instanceof Data)
+            {
+                Data data = (Data) curr;
+                Object node = data.get((String) key);
+                if (node == null)
+                {
+                    value = create(path, i, value);
+                    data.set((String) key, value);
+                    break;
+                }
+                else if (i == n - 1)
+                {
+                    data.set((String) key, value);
+                    break;
+                }
+                else
+                {
+                    curr = node;
+                }
+            }
+            else if (key instanceof Integer && curr instanceof List)
+            {
+                @SuppressWarnings("unchecked")
+                List<Object> list = (List<Object>) curr;
+                Integer index = (Integer) key;
+                
+                if (index < list.size())
+                {
+                    if (i == n - 1)
+                    {
+                        list.add(index, value);
+                    }
+                    else
+                    {
+                        curr = list.get(index);
+                    }
+                }
+                else
+                {
+                    value = create(path, i, value);
+                    list.add(value);
+                }
+            }
+        }
+        
+        return root;
+    }
+    
+    private Data visit0(Data data, DataPath path)
+    {
+        Data output = new Data();
+        
+        Object value = read(data, path);
+        if (value != null)
+        {
+            output = update(output, path, value);
+        }
+        
+        return output;
     }
     
     public Data visit(Data data, String path) throws IOException
@@ -122,11 +138,6 @@ public class DataVisitor
         if (data == null || data.size() == 0) return null;
         if (path == null) return null;
 
-        targPath = new DataPath(path);
-        currPath = new DataPath();
-        
-        visit0(data);
-        
-        return data;
+        return visit0(data, new DataPath(path));
     }
 }

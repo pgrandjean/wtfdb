@@ -152,8 +152,6 @@ public class Test
         long totalTime = 0L;
         double time = 0.0;
         
-        DataSerializer serializer = new DataSerializer();
-        byte[] raw = serializer.serialize(data0);
         DataVisitor visitor = new DataVisitor();
         Data data = null;
         
@@ -161,7 +159,7 @@ public class Test
         {
             data = newData();
             startTime = System.nanoTime();
-            Data res = visitor.visit(data, path);
+            Data res = visitor.visit(data, path2);
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
@@ -177,6 +175,7 @@ public class Test
      */
     public static void main(String[] args) throws Exception
     {
+        System.out.println(null instanceof Object);
         Test test = new Test();
         test.testSerialization();
         test.testResolver();
