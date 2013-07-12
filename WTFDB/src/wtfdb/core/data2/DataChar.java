@@ -17,6 +17,17 @@ public class DataChar extends Data<Character>
     }
 
     @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (!(o instanceof DataChar)) return false;
+        
+        DataChar that = (DataChar) o;
+        
+        return this.value.equals(that.value);
+    }
+    
+    @Override
     public void serialize(DataOutputStream output) throws IOException
     {
         output.writeByte(CHAR);
@@ -27,5 +38,11 @@ public class DataChar extends Data<Character>
     public void deserialize(DataInputStream input) throws IOException
     {
         value = input.readChar();
+    }
+
+    @Override
+    public void toString(StringBuffer buffer)
+    {
+        buffer.append('\'').append(value).append('\'');
     }
 }

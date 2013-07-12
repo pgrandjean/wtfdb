@@ -14,8 +14,21 @@ public class DataString extends Data<String>
     protected DataString(String value)
     {
         super(value);
+        
+        if (value == null) throw new NullPointerException();
     }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (!(o instanceof DataString)) return false;
+        
+        DataString that = (DataString) o;
+        
+        return this.value.equals(that.value);
+    }
+    
     @Override
     public void serialize(DataOutputStream output) throws IOException
     {
@@ -27,5 +40,11 @@ public class DataString extends Data<String>
     public void deserialize(DataInputStream input) throws IOException
     {
         value = input.readUTF();
+    }
+
+    @Override
+    public void toString(StringBuffer buffer)
+    {
+        buffer.append('"').append(value).append('"');
     }
 }

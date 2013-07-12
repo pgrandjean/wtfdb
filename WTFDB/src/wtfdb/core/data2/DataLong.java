@@ -17,6 +17,17 @@ public class DataLong extends Data<Long>
     }
 
     @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (!(o instanceof DataLong)) return false;
+        
+        DataLong that = (DataLong) o;
+        
+        return this.value.equals(that.value);
+    }
+    
+    @Override
     public void serialize(DataOutputStream output) throws IOException
     {
         output.writeByte(LONG);
@@ -27,5 +38,11 @@ public class DataLong extends Data<Long>
     public void deserialize(DataInputStream input) throws IOException
     {
         value = input.readLong();
+    }
+
+    @Override
+    public void toString(StringBuffer buffer)
+    {
+        buffer.append(value).append('l');
     }
 }

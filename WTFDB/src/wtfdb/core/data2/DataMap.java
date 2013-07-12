@@ -30,6 +30,17 @@ public class DataMap extends Data<Map<String, Data<?>>>
         value.put(k, v);
     }
     
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (!(o instanceof DataMap)) return false;
+        
+        DataMap that = (DataMap) o;
+        
+        return this.value.equals(that.value);
+    }
+    
     public Boolean getBoolean(String k)
     {
         return get(k);
@@ -97,69 +108,69 @@ public class DataMap extends Data<Map<String, Data<?>>>
     
     public void set(String k, boolean v)
     {
-        value.put(k, new DataBoolean(v));
+        set(k, new DataBoolean(v));
     }
 
     public void set(String k, byte v)
     {
-        value.put(k, new DataByte(v));
+        set(k, new DataByte(v));
     }
 
     public void set(String k, short v)
     {
-        value.put(k, new DataShort(v));
+        set(k, new DataShort(v));
     }
 
     public void set(String k, int v)
     {
-        value.put(k, new DataInteger(v));
+        set(k, new DataInteger(v));
     }
 
     public void set(String k, long v)
     {
-        value.put(k, new DataLong(v));
+        set(k, new DataLong(v));
     }
 
     public void set(String k, float v)
     {
-        value.put(k, new DataFloat(v));
+        set(k, new DataFloat(v));
     }
 
     public void set(String k, double v)
     {
-        value.put(k, new DataDouble(v));
+        set(k, new DataDouble(v));
     }
 
     public void set(String k, char v)
     {
-        value.put(k, new DataChar(v));
+        set(k, new DataChar(v));
     }
 
     public void set(String k, String v)
     {
-        value.put(k, new DataString(v));
+        set(k, new DataString(v));
     }
 
     public void set(String k, byte[] v)
     {
-        value.put(k, new DataByteArray(v));
+        set(k, new DataByteArray(v));
     }
 
     public void set(String k, Date v)
     {
-        value.put(k, new DataDate(v));
+        set(k, new DataDate(v));
     }
 
     public void set(String k, DataArray v)
     {
         v.parent = this;
-        value.put(k, v);
+        this.value.put(k, v);
     }
 
     public void set(String k, DataMap v)
     {
         v.parent = this;
-        value.put(k, v);
+        this.value.put(k, v);
     }
     
     @Override
@@ -187,5 +198,31 @@ public class DataMap extends Data<Map<String, Data<?>>>
             Data<?> value = deserialize(type, input);
             set(key, value);
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuffer buffer = new StringBuffer();
+        toString(buffer);
+        
+        return buffer.toString();
+    }
+    
+    @Override
+    public void toString(StringBuffer buffer)
+    {
+        buffer.append("{ ");
+
+        int i = 0; int size = value.size();
+        for (Entry<String, Data<?>> entry : value.entrySet())        
+        {
+            buffer.append('"').append(entry.getKey()).append("\": ");
+            entry.getValue().toString(buffer);
+            
+            if (i++ != size - 1) buffer.append(", ");
+        }
+        
+        buffer.append(" }");
     }
 }

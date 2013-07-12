@@ -38,7 +38,7 @@ public class Test
         data0.set("long", (long) 1);
         data0.set("float", (float) 1);
         data0.set("double", (double) 1);
-        data0.set("character", (char) 1);
+        data0.set("character", 'c');
         data0.set("string", "1");
         
         data0.set("data", subData0);
@@ -61,7 +61,7 @@ public class Test
         data1.set("long", (long) 1);
         data1.set("float", (float) 1);
         data1.set("double", (double) 1);
-        data1.set("character", (char) 1);
+        data1.set("character", 'c');
         data1.set("string", "1");
         
         data1.set("data", subData1);

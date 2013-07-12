@@ -17,6 +17,17 @@ public class DataShort extends Data<Short>
     }
 
     @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (!(o instanceof DataShort)) return false;
+        
+        DataShort that = (DataShort) o;
+        
+        return this.value.equals(that.value);
+    }
+    
+    @Override
     public void serialize(DataOutputStream output) throws IOException
     {
         output.writeByte(SHORT);
@@ -27,5 +38,11 @@ public class DataShort extends Data<Short>
     public void deserialize(DataInputStream input) throws IOException
     {
         value = input.readShort();
+    }
+
+    @Override
+    public void toString(StringBuffer buffer)
+    {
+        buffer.append(value).append('s');
     }
 }

@@ -17,6 +17,17 @@ public class DataByte extends Data<Byte>
     }
 
     @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (!(o instanceof DataByte)) return false;
+        
+        DataByte that = (DataByte) o;
+        
+        return this.value.equals(that.value);
+    }
+    
+    @Override
     public void serialize(DataOutputStream output) throws IOException
     {
         output.writeByte(BYTE);
@@ -27,5 +38,11 @@ public class DataByte extends Data<Byte>
     public void deserialize(DataInputStream input) throws IOException
     {
         value = input.readByte();
+    }
+
+    @Override
+    public void toString(StringBuffer buffer)
+    {
+        buffer.append(value).append('b');
     }
 }

@@ -151,8 +151,13 @@ public abstract class Data<T>
         value.deserialize(input);
         return value;
     }
+    
+    @Override
+    public abstract boolean equals(Object o);
         
     public abstract void serialize(DataOutputStream output) throws IOException;
     
     public abstract void deserialize(DataInputStream input) throws IOException;
+
+    public abstract void toString(StringBuffer buffer);
 }

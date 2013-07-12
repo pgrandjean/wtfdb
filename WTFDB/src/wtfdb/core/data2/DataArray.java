@@ -29,72 +29,158 @@ public class DataArray extends Data<List<Data<?>>>
         v.parent = this;
         value.add(v);
     }
-    
+
+    @SuppressWarnings("unchecked")
+    private <T> T get(int i)
+    {
+        if (i >= value.size()) return null;
+        
+        Data<T> v = (Data<T>) value.get(i);
+        
+        return v.value;
+    }
+
     public void add(boolean v)
     {
-        value.add(new DataBoolean(v));
+        add(new DataBoolean(v));
     }
 
     public void add(byte v)
     {
-        value.add(new DataByte(v));
+        add(new DataByte(v));
     }
 
     public void add(short v)
     {
-        value.add(new DataShort(v));
+        add(new DataShort(v));
     }
 
     public void add(int v)
     {
-        value.add(new DataInteger(v));
+        add(new DataInteger(v));
     }
 
     public void add(long v)
     {
-        value.add(new DataLong(v));
+        add(new DataLong(v));
     }
 
     public void add(float v)
     {
-        value.add(new DataFloat(v));
+        add(new DataFloat(v));
     }
 
     public void add(double v)
     {
-        value.add(new DataDouble(v));
+        add(new DataDouble(v));
     }
 
     public void add(char v)
     {
-        value.add(new DataChar(v));
+        add(new DataChar(v));
     }
 
     public void add(String v)
     {
-        value.add(new DataString(v));
+        add(new DataString(v));
     }
 
     public void add(byte[] v)
     {
-        value.add(new DataByteArray(v));
+        add(new DataByteArray(v));
     }
 
     public void add(Date v)
     {
-        value.add(new DataDate(v));
+        add(new DataDate(v));
     }
 
     public void add(DataArray v)
     {
         v.parent = this;
-        value.add(v);
+        this.value.add(v);
     }
 
     public void add(DataMap v)
     {
         v.parent = this;
-        value.add(v);
+        this.value.add(v);
+    }
+
+    public Boolean getBoolean(int i)
+    {
+        return get(i);
+    }
+
+    public Byte getByte(int i)
+    {
+        return get(i);
+    }
+
+    public Short getShort(int i)
+    {
+        return get(i);
+    }
+    
+    public Integer getInteger(int i)
+    {
+        return get(i);
+    }
+    
+    public Long getLong(int i)
+    {
+        return get(i);
+    }
+    
+    public Float getFloat(int i)
+    {
+        return get(i);
+    }
+    
+    public Double getDouble(int i)
+    {
+        return get(i);
+    }
+    
+    public Character getChar(int i)
+    {
+        return get(i);
+    }
+    
+    public String getString(int i)
+    {
+        return get(i);
+    }
+    
+    public byte[] getByteArray(int i)
+    {
+        return get(i);
+    }
+    
+    public Date getDate(int i)
+    {
+        return get(i);
+    }
+    
+    public DataArray getDataArray(int i)
+    {
+        return (DataArray) value.get(i);
+    }
+    
+    public DataMap getDataMap(int i)
+    {
+        return (DataMap) value.get(i);
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (!(o instanceof DataArray)) return false;
+        
+        DataArray that = (DataArray) o;
+        
+        return this.value.equals(that.value);
     }
     
     @Override
@@ -113,12 +199,26 @@ public class DataArray extends Data<List<Data<?>>>
     public void deserialize(DataInputStream input) throws IOException
     {
         int size = input.readInt();
-        
         for (int i = 0; i < size; i++)
         {
             byte type = input.readByte();
             Data<?> value = deserialize(type, input);
             add(value);
         }
+    }
+
+    @Override
+    public void toString(StringBuffer buffer)
+    {
+        buffer.append("[ ");
+
+        int size = value.size();
+        for (int i = 0; i < size; i++)
+        {
+            value.get(i).toString(buffer);
+            if (i != size) buffer.append(", ");
+        }
+        
+        buffer.append(" ]");
     }
 }

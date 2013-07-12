@@ -15,7 +15,18 @@ public class DataDouble extends Data<Double>
     {
         super(value);
     }
-      
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (!(o instanceof DataDouble)) return false;
+        
+        DataDouble that = (DataDouble) o;
+        
+        return this.value.equals(that.value);
+    }
+    
     @Override
     public void serialize(DataOutputStream output) throws IOException
     {
@@ -27,5 +38,11 @@ public class DataDouble extends Data<Double>
     public void deserialize(DataInputStream input) throws IOException
     {
         value = input.readDouble();
+    }
+
+    @Override
+    public void toString(StringBuffer buffer)
+    {
+        buffer.append(value).append('d');
     }
 }
