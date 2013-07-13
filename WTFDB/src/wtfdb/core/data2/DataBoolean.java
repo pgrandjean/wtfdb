@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataBoolean extends Data<Boolean>
 {
     protected DataBoolean()
@@ -28,16 +30,16 @@ public class DataBoolean extends Data<Boolean>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(BOOLEAN);
-        output.writeBoolean(value);
+        buffer.writeByte(BOOLEAN);
+        buffer.writeBoolean(value);
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        value = input.readBoolean();
+        value = buffer.readBoolean();
     }
 
     @Override

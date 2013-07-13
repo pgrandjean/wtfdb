@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataArray extends Data<List<Data<?>>>
 {
     public DataArray()
@@ -172,6 +174,16 @@ public class DataArray extends Data<List<Data<?>>>
         return (DataMap) value.get(i);
     }
     
+    public void remove(int i)
+    {
+        value.remove(i);
+    }
+    
+    public int size()
+    {
+        return value.size();
+    }
+    
     @Override
     public boolean equals(Object o)
     {
@@ -184,25 +196,25 @@ public class DataArray extends Data<List<Data<?>>>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(ARRAY);
-        output.writeInt(value.size());
+        buffer.writeByte(ARRAY);
+        buffer.writeInt(value.size());
         
         for (int i = 0; i < value.size(); i++)
         {
-            value.get(i).serialize(output);
+            value.get(i).serialize(buffer);
         }
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        int size = input.readInt();
+        int size = buffer.readInt();
         for (int i = 0; i < size; i++)
         {
-            byte type = input.readByte();
-            Data<?> value = deserialize(type, input);
+            byte type = buffer.readByte();
+            Data<?> value = deserialize(type, buffer);
             add(value);
         }
     }

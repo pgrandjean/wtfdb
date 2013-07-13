@@ -1,8 +1,8 @@
 package wtfdb.core.data2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+
+import wtfdb.core.io.DataBuffer;
 
 public abstract class Data<T>
 {
@@ -60,7 +60,7 @@ public abstract class Data<T>
         this.parent = parent;
     }
     
-    protected static Data<?> deserialize(byte type, DataInputStream input) throws IOException
+    protected static Data<?> deserialize(byte type, DataBuffer buffer) throws IOException
     {
         Data<?> value = null;
         
@@ -148,16 +148,16 @@ public abstract class Data<T>
                 throw new IOException("unknown type: " + type);
         }
 
-        value.deserialize(input);
+        value.deserialize(buffer);
         return value;
     }
     
     @Override
     public abstract boolean equals(Object o);
         
-    public abstract void serialize(DataOutputStream output) throws IOException;
+    public abstract void serialize(DataBuffer buffer) throws IOException;
     
-    public abstract void deserialize(DataInputStream input) throws IOException;
+    public abstract void deserialize(DataBuffer buffer) throws IOException;
 
     public abstract void toString(StringBuffer buffer);
 }

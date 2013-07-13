@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataFloat extends Data<Float>
 {
     protected DataFloat()
@@ -28,16 +30,16 @@ public class DataFloat extends Data<Float>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(FLOAT);
-        output.writeFloat(value);
+        buffer.writeByte(FLOAT);
+        buffer.writeFloat(value);
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        value = input.readFloat();
+        value = buffer.readFloat();
     }
 
     @Override

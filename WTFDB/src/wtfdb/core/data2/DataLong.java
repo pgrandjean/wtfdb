@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataLong extends Data<Long>
 {
     protected DataLong()
@@ -28,16 +30,16 @@ public class DataLong extends Data<Long>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(LONG);
-        output.writeLong(value);
+        buffer.writeByte(LONG);
+        buffer.writeLong(value);
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        value = input.readLong();
+        value = buffer.readLong();
     }
 
     @Override

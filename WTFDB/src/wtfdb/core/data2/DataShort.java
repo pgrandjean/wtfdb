@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataShort extends Data<Short>
 {
     protected DataShort()
@@ -28,16 +30,16 @@ public class DataShort extends Data<Short>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(SHORT);
-        output.writeShort(value);
+        buffer.writeByte(SHORT);
+        buffer.writeShort(value);
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        value = input.readShort();
+        value = buffer.readShort();
     }
 
     @Override

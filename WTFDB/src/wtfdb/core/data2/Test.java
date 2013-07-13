@@ -1,15 +1,15 @@
 package wtfdb.core.data2;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel.MapMode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
+
+import wtfdb.core.io.DataBuffer;
 
 public class Test
 {
@@ -17,7 +17,6 @@ public class Test
     
     private DataMap data1 = null;
     
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Test()
     {
         // data0
@@ -102,46 +101,46 @@ public class Test
         long elapsedTime = 0L;
         long totalTime = 0L;
         double time = 0.0;
-        byte[] bytes = null;
         
+        RandomAccessFile file = new RandomAccessFile("test.bin", "rw");
+        MappedByteBuffer mappedBuffer = file.getChannel().map(MapMode.READ_WRITE, 0, 1_024 * 1_024 * 1_024);
+        DataBuffer buffer = new DataBuffer(mappedBuffer);
         
         for (int i = 0; i < 1000000; i++)
-        {
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream output = new DataOutputStream(b);
-            
+        {   
             startTime = System.nanoTime();
-            data0.serialize(output);
+            data0.serialize(buffer);
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
-            bytes = b.toByteArray();
+            mappedBuffer.clear();
         }
         
         time = (double) (totalTime);
         System.out.println("serialization time: " + time / 1000000 / 1000000);
-        System.out.println(bytes.length);
 
+        mappedBuffer.clear();
         totalTime = 0L;
         for (int i = 0; i < 1000000; i++)
         {
-            ByteArrayInputStream b = new ByteArrayInputStream(bytes);
-            DataInputStream input = new DataInputStream(b);
-            
-            input.readByte();
+            buffer.readByte();
             data1 = new DataMap();
             
             startTime = System.nanoTime();
-            data1.deserialize(input);
+            data1.deserialize(buffer);
             endTime = System.nanoTime();
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
+            mappedBuffer.clear();
         }
         
         time = (double) (totalTime);
         System.out.println("deserialization time: " + time / 1000000 / 1000000);
         
         Assert.assertTrue(data0.equals(data1));
+        
+        mappedBuffer.force();
+        file.close();
     }
     
     private String path = "data";
@@ -193,14 +192,6 @@ public class Test
         
         byte[] a = new byte[3];
         System.out.println(a.getClass());
-        
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        DataOutputStream dataOutput = new DataOutputStream(output);
-        dataOutput.writeInt(1);
-        dataOutput.flush();
-        dataOutput.close();
-        
-        System.out.println(output.toByteArray().length);
         
         String[] split = "toto".split("\\.");
         System.out.println(split.length + " " + split[0]);

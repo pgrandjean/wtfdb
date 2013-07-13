@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataDate extends Data<Date>
 {
     protected DataDate()
@@ -31,16 +33,16 @@ public class DataDate extends Data<Date>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(DATE);
-        output.writeLong(value.getTime());
+        buffer.writeByte(DATE);
+        buffer.writeLong(value.getTime());
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        long time = input.readLong();
+        long time = buffer.readLong();
         value = new Date(time);
     }
 

@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataByteArray extends Data<byte[]>
 {
     protected DataByteArray()
@@ -35,19 +37,19 @@ public class DataByteArray extends Data<byte[]>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(BYTE_ARRAY);
-        output.writeInt(value.length);
-        output.write(value);
+        buffer.writeByte(BYTE_ARRAY);
+        buffer.writeInt(value.length);
+        buffer.write(value);
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        int size = input.readInt();
+        int size = buffer.readInt();
         byte[] bytes = new byte[size];
-        input.read(bytes);
+        buffer.readFully(bytes);
         value = bytes;
     }
 

@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataMap extends Data<Map<String, Data<?>>>
 {
     public DataMap()
@@ -106,6 +108,11 @@ public class DataMap extends Data<Map<String, Data<?>>>
         return (DataMap) value.get(k);
     }
     
+    public void remove(String k)
+    {
+        value.remove(k); 
+    }
+    
     public void set(String k, boolean v)
     {
         set(k, new DataBoolean(v));
@@ -174,28 +181,28 @@ public class DataMap extends Data<Map<String, Data<?>>>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(DATA);
-        output.writeInt(value.size());
+        buffer.writeByte(DATA);
+        buffer.writeInt(value.size());
         
         for (Entry<String, Data<?>> entry : value.entrySet())        
         {
-            output.writeUTF(entry.getKey());
-            entry.getValue().serialize(output);
+            buffer.writeUTF(entry.getKey());
+            entry.getValue().serialize(buffer);
         }
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        int size = input.readInt();
+        int size = buffer.readInt();
         for (int i = 0; i < size; i++)
         {
-            String key = input.readUTF();
+            String key = buffer.readUTF();
             
-            byte type = input.readByte();
-            Data<?> value = deserialize(type, input);
+            byte type = buffer.readByte();
+            Data<?> value = deserialize(type, buffer);
             set(key, value);
         }
     }

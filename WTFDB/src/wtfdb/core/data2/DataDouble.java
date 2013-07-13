@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataDouble extends Data<Double>
 {
     protected DataDouble()
@@ -28,16 +30,16 @@ public class DataDouble extends Data<Double>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(DOUBLE);
-        output.writeDouble(value);
+        buffer.writeByte(DOUBLE);
+        buffer.writeDouble(value);
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        value = input.readDouble();
+        value = buffer.readDouble();
     }
 
     @Override

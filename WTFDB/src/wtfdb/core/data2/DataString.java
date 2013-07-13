@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import wtfdb.core.io.DataBuffer;
+
 public class DataString extends Data<String>
 {
     protected DataString()
@@ -30,16 +32,16 @@ public class DataString extends Data<String>
     }
     
     @Override
-    public void serialize(DataOutputStream output) throws IOException
+    public void serialize(DataBuffer buffer) throws IOException
     {
-        output.writeByte(STRING);
-        output.writeUTF(value);
+        buffer.writeByte(STRING);
+        buffer.writeUTF(value);
     }
 
     @Override
-    public void deserialize(DataInputStream input) throws IOException
+    public void deserialize(DataBuffer buffer) throws IOException
     {
-        value = input.readUTF();
+        value = buffer.readUTF();
     }
 
     @Override
