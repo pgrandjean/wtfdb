@@ -14,6 +14,21 @@ public class DataBuffer implements DataInput, DataOutput
         this.buffer = buffer;
     }
     
+    public int position()
+    {
+        return buffer.position();
+    }
+    
+    public void position(int position)
+    {
+        buffer.position(position);
+    }
+    
+    public void writeInt(int index, int b) throws IOException
+    {
+        buffer.putInt(index, b);
+    }
+    
     @Override
     public void write(int b) throws IOException
     {

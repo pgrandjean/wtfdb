@@ -1,7 +1,5 @@
 package wtfdb.core.data2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -30,6 +28,11 @@ public class DataMap extends Data<Map<String, Data<?>>>
     {
         v.parent = v;
         value.put(k, v);
+    }
+    
+    public void clear()
+    {
+        value.clear();
     }
     
     @Override

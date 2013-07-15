@@ -1,4 +1,4 @@
-package wtfdb.core.data2;
+package wtfdb.core.storage;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import org.junit.Assert;
 
+import wtfdb.core.data2.DataArray;
+import wtfdb.core.data2.DataMap;
 import wtfdb.core.io.DataBuffer;
 
 public class Test
@@ -105,33 +107,35 @@ public class Test
         RandomAccessFile file = new RandomAccessFile("test.bin", "rw");
         MappedByteBuffer mappedBuffer = file.getChannel().map(MapMode.READ_WRITE, 0, 1_024 * 1_024 * 1_024);
         DataBuffer buffer = new DataBuffer(mappedBuffer);
+        Record rec = new Record();
         
         for (int i = 0; i < 1000000; i++)
         {   
             startTime = System.nanoTime();
-            data0.serialize(buffer);
+            rec.serialize(buffer, data0);
             endTime = System.nanoTime();
+            
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
-            mappedBuffer.clear();
         }
         
         time = (double) (totalTime);
         System.out.println("serialization time: " + time / 1000000 / 1000000);
+        System.out.println(buffer.position());
 
         mappedBuffer.clear();
         totalTime = 0L;
+
+        data1 = new DataMap();
         for (int i = 0; i < 1000000; i++)
-        {
-            buffer.readByte();
-            data1 = new DataMap();
-            
+        {   
             startTime = System.nanoTime();
-            data1.deserialize(buffer);
+            rec.deserialize(buffer);
             endTime = System.nanoTime();
+            
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
-            mappedBuffer.clear();
+            data1.clear();
         }
         
         time = (double) (totalTime);

@@ -1,7 +1,5 @@
 package wtfdb.core.data2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -109,6 +107,11 @@ public class DataArray extends Data<List<Data<?>>>
         this.value.add(v);
     }
 
+    public void clear()
+    {
+        value.clear();
+    }
+    
     public Boolean getBoolean(int i)
     {
         return get(i);
