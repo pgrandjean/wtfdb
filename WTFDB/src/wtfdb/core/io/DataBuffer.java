@@ -24,11 +24,14 @@ public class DataBuffer implements DataInput, DataOutput
         buffer.position(position);
     }
     
+<<<<<<< HEAD
     public void writeInt(int index, int b) throws IOException
     {
         buffer.putInt(index, b);
     }
     
+=======
+>>>>>>> branch 'master' of https://github.com/pgrandjean/wtfdb.git
     @Override
     public void write(int b) throws IOException
     {
@@ -77,6 +80,11 @@ public class DataBuffer implements DataInput, DataOutput
         buffer.putInt(v);
     }
 
+    public void writeInt(int pos, int v) throws IOException
+    {
+        buffer.putInt(pos, v);
+    }
+    
     @Override
     public void writeLong(long v) throws IOException
     {
