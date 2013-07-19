@@ -14,6 +14,16 @@ public class DataBuffer implements DataInput, DataOutput
         this.buffer = buffer;
     }
     
+    public int position()
+    {
+        return buffer.position();
+    }
+    
+    public void position(int position)
+    {
+        buffer.position(position);
+    }
+    
     @Override
     public void write(int b) throws IOException
     {
@@ -62,6 +72,11 @@ public class DataBuffer implements DataInput, DataOutput
         buffer.putInt(v);
     }
 
+    public void writeInt(int pos, int v) throws IOException
+    {
+        buffer.putInt(pos, v);
+    }
+    
     @Override
     public void writeLong(long v) throws IOException
     {
