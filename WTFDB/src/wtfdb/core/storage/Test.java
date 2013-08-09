@@ -11,7 +11,8 @@ import org.junit.Assert;
 
 import wtfdb.core.data2.DataArray;
 import wtfdb.core.data2.DataMap;
-import wtfdb.core.io.DataBuffer;
+import wtfdb.core.io.IOBuffer;
+import wtfdb.core.operations.DataFormatter;
 
 public class Test
 {
@@ -106,7 +107,7 @@ public class Test
         
         RandomAccessFile file = new RandomAccessFile("test.bin", "rw");
         MappedByteBuffer mappedBuffer = file.getChannel().map(MapMode.READ_WRITE, 0, 1_024 * 1_024 * 1_024);
-        DataBuffer buffer = new DataBuffer(mappedBuffer);
+        IOBuffer buffer = new IOBuffer(mappedBuffer);
         Record rec = new Record();
         
         for (int i = 0; i < 1000000; i++)
@@ -130,12 +131,11 @@ public class Test
         for (int i = 0; i < 1000000; i++)
         {   
             startTime = System.nanoTime();
-            rec.deserialize(buffer);
+            data1 = rec.deserialize(buffer, true);
             endTime = System.nanoTime();
             
             elapsedTime = endTime - startTime;
             totalTime += elapsedTime;
-            data1.clear();
         }
         
         time = (double) (totalTime);
@@ -149,6 +149,19 @@ public class Test
     
     private String path = "data";
     private String path2 = "list";
+
+    // parse raw return raw
+    private void testFormatter()
+    {
+        StringBuffer buffer = new StringBuffer();
+        DataFormatter formatter = new DataFormatter(buffer, true, true);
+        data0.accept(formatter);
+        
+        String string = buffer.toString();
+        System.out.println(string);
+        
+        System.out.println();
+    }
     
     // parse raw return raw
     private void testResolver() throws IOException
@@ -184,6 +197,7 @@ public class Test
     {
         System.out.println(null instanceof Object);
         Test test = new Test();
+        test.testFormatter();
         test.testSerialization();
         test.testResolver();
         

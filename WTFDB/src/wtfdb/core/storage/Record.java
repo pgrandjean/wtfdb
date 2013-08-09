@@ -3,47 +3,63 @@ package wtfdb.core.storage;
 import java.io.IOException;
 
 import wtfdb.core.data2.DataMap;
-import wtfdb.core.io.DataBuffer;
+import wtfdb.core.io.IOBuffer;
+import wtfdb.core.io.IODeserializer;
+import wtfdb.core.io.IOSerializer;
 
 public class Record
 {
+    private boolean init = false;
+    
     private boolean valid = false;
     
     private int start = -1;
     
     private int end = -1;
     
-    public void serialize(DataBuffer buffer, DataMap data) throws IOException
+    public void serialize(IOBuffer buffer, DataMap data) throws IOException
     {
         valid = true;
 
         start = buffer.position();
         buffer.writeBoolean(valid);
         buffer.writeInt(0);
-        data.serialize(buffer);
+        
+        IOSerializer serializer = new IOSerializer(buffer);
+        serializer.visit(data);
+        
         end = buffer.position();
         buffer.writeInt(start + 1, end);
     }
     
-    public void deserialize(DataBuffer buffer) throws IOException
+    public void deserialize(IOBuffer buffer) throws IOException
     {
-        start = buffer.position();
-        valid = buffer.readBoolean();
-        end = buffer.readInt();
-        
-        buffer.position(end);
+        deserialize(buffer, false);
     }
     
-    public DataMap deserialize(DataBuffer buffer, DataMap data) throws IOException
+    public DataMap deserialize(IOBuffer buffer, boolean full) throws IOException
     {
-        if (valid)
+        if (!init)
         {
-            buffer.position(start + 6);
-                
-            data.clear();
-            data.deserialize(buffer);
-                
-            return data;
+            start = buffer.position();
+            valid = buffer.readBoolean();
+            end = buffer.readInt();
+            
+            buffer.position(end);
+            init = true;
+        }
+        
+        if (full)
+        {
+            if (valid)
+            {
+                buffer.position(start + 5);
+                    
+                IODeserializer deserializer = new IODeserializer(buffer);
+                DataMap data = (DataMap) deserializer.visit();
+                    
+                return data;
+            }
         }
         
         return null;

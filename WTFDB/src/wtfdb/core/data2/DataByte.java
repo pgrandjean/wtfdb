@@ -1,21 +1,23 @@
 package wtfdb.core.data2;
 
-import java.io.IOException;
-
-import wtfdb.core.io.DataBuffer;
-
 public class DataByte extends Data<Byte>
 {
-    protected DataByte()
+    public DataByte()
     {
         super();
     }
 
-    protected DataByte(byte value)
+    public DataByte(byte value)
     {
         super(value);
     }
 
+    @Override
+    public void accept(DataVisitor visitor)
+    {
+        visitor.visit(this);
+    }
+    
     @Override
     public boolean equals(Object o)
     {
@@ -25,24 +27,5 @@ public class DataByte extends Data<Byte>
         DataByte that = (DataByte) o;
         
         return this.value.equals(that.value);
-    }
-    
-    @Override
-    public void serialize(DataBuffer buffer) throws IOException
-    {
-        buffer.writeByte(BYTE);
-        buffer.writeByte(value);
-    }
-
-    @Override
-    public void deserialize(DataBuffer buffer) throws IOException
-    {
-        value = buffer.readByte();
-    }
-
-    @Override
-    public void toString(StringBuffer buffer)
-    {
-        buffer.append(value).append('b');
     }
 }

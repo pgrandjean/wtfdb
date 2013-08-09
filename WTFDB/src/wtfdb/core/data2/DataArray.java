@@ -1,11 +1,8 @@
 package wtfdb.core.data2;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-
-import wtfdb.core.io.DataBuffer;
 
 public class DataArray extends Data<List<Data<?>>>
 {
@@ -24,12 +21,6 @@ public class DataArray extends Data<List<Data<?>>>
         super(new Vector<Data<?>>(), parent);
     }
 
-    protected void add(Data<?> v)
-    {
-        v.parent = this;
-        value.add(v);
-    }
-
     @SuppressWarnings("unchecked")
     private <T> T get(int i)
     {
@@ -40,6 +31,12 @@ public class DataArray extends Data<List<Data<?>>>
         return v.value;
     }
 
+    @Override
+    public void accept(DataVisitor visitor)
+    {
+        visitor.visit(this);
+    }
+    
     public void add(boolean v)
     {
         add(new DataBoolean(v));
@@ -93,6 +90,12 @@ public class DataArray extends Data<List<Data<?>>>
     public void add(Date v)
     {
         add(new DataDate(v));
+    }
+
+    public void add(Data<?> v)
+    {
+        v.parent = this;
+        value.add(v);
     }
 
     public void add(DataArray v)
@@ -196,44 +199,5 @@ public class DataArray extends Data<List<Data<?>>>
         DataArray that = (DataArray) o;
         
         return this.value.equals(that.value);
-    }
-    
-    @Override
-    public void serialize(DataBuffer buffer) throws IOException
-    {
-        buffer.writeByte(ARRAY);
-        buffer.writeInt(value.size());
-        
-        for (int i = 0; i < value.size(); i++)
-        {
-            value.get(i).serialize(buffer);
-        }
-    }
-
-    @Override
-    public void deserialize(DataBuffer buffer) throws IOException
-    {
-        int size = buffer.readInt();
-        for (int i = 0; i < size; i++)
-        {
-            byte type = buffer.readByte();
-            Data<?> value = deserialize(type, buffer);
-            add(value);
-        }
-    }
-
-    @Override
-    public void toString(StringBuffer buffer)
-    {
-        buffer.append("[ ");
-
-        int size = value.size();
-        for (int i = 0; i < size; i++)
-        {
-            value.get(i).toString(buffer);
-            if (i != size) buffer.append(", ");
-        }
-        
-        buffer.append(" ]");
     }
 }

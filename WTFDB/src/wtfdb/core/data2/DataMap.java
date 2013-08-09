@@ -1,12 +1,8 @@
 package wtfdb.core.data2;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import wtfdb.core.io.DataBuffer;
 
 public class DataMap extends Data<Map<String, Data<?>>>
 {
@@ -14,7 +10,7 @@ public class DataMap extends Data<Map<String, Data<?>>>
     {
         super(new LinkedHashMap<String, Data<?>>());
     }
-    
+
     @SuppressWarnings("unchecked")
     private <T> T get(String k)
     {
@@ -24,10 +20,10 @@ public class DataMap extends Data<Map<String, Data<?>>>
         else return v.value;
     }
 
-    protected void set(String k, Data<?> v)
+    @Override
+    public void accept(DataVisitor visitor)
     {
-        v.parent = v;
-        value.put(k, v);
+        visitor.visit(this);
     }
     
     public void clear()
@@ -45,7 +41,7 @@ public class DataMap extends Data<Map<String, Data<?>>>
         
         return this.value.equals(that.value);
     }
-    
+
     public Boolean getBoolean(String k)
     {
         return get(k);
@@ -115,7 +111,13 @@ public class DataMap extends Data<Map<String, Data<?>>>
     {
         value.remove(k); 
     }
-    
+
+    public void set(String k, Data<?> v)
+    {
+        v.parent = v;
+        value.put(k, v);
+    }
+
     public void set(String k, boolean v)
     {
         set(k, new DataBoolean(v));
@@ -181,58 +183,5 @@ public class DataMap extends Data<Map<String, Data<?>>>
     {
         v.parent = this;
         this.value.put(k, v);
-    }
-    
-    @Override
-    public void serialize(DataBuffer buffer) throws IOException
-    {
-        buffer.writeByte(DATA);
-        buffer.writeInt(value.size());
-        
-        for (Entry<String, Data<?>> entry : value.entrySet())        
-        {
-            buffer.writeUTF(entry.getKey());
-            entry.getValue().serialize(buffer);
-        }
-    }
-
-    @Override
-    public void deserialize(DataBuffer buffer) throws IOException
-    {
-        int size = buffer.readInt();
-        for (int i = 0; i < size; i++)
-        {
-            String key = buffer.readUTF();
-            
-            byte type = buffer.readByte();
-            Data<?> value = deserialize(type, buffer);
-            set(key, value);
-        }
-    }
-
-    @Override
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-        toString(buffer);
-        
-        return buffer.toString();
-    }
-    
-    @Override
-    public void toString(StringBuffer buffer)
-    {
-        buffer.append("{ ");
-
-        int i = 0; int size = value.size();
-        for (Entry<String, Data<?>> entry : value.entrySet())        
-        {
-            buffer.append('"').append(entry.getKey()).append("\": ");
-            entry.getValue().toString(buffer);
-            
-            if (i++ != size - 1) buffer.append(", ");
-        }
-        
-        buffer.append(" }");
     }
 }
