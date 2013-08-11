@@ -2,7 +2,7 @@ package wtfdb.core.storage;
 
 import java.io.IOException;
 
-import wtfdb.core.data2.DataMap;
+import wtfdb.core.data.DataMap;
 import wtfdb.core.io.IOBuffer;
 import wtfdb.core.io.IODeserializer;
 import wtfdb.core.io.IOSerializer;

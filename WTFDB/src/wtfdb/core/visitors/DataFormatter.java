@@ -1,22 +1,22 @@
-package wtfdb.core.operations;
+package wtfdb.core.visitors;
 
 import java.util.Map.Entry;
 
-import wtfdb.core.data2.Data;
-import wtfdb.core.data2.DataArray;
-import wtfdb.core.data2.DataBoolean;
-import wtfdb.core.data2.DataByte;
-import wtfdb.core.data2.DataByteArray;
-import wtfdb.core.data2.DataChar;
-import wtfdb.core.data2.DataDate;
-import wtfdb.core.data2.DataDouble;
-import wtfdb.core.data2.DataFloat;
-import wtfdb.core.data2.DataInteger;
-import wtfdb.core.data2.DataLong;
-import wtfdb.core.data2.DataMap;
-import wtfdb.core.data2.DataShort;
-import wtfdb.core.data2.DataString;
-import wtfdb.core.data2.DataVisitor;
+import wtfdb.core.data.Data;
+import wtfdb.core.data.DataArray;
+import wtfdb.core.data.DataBoolean;
+import wtfdb.core.data.DataByte;
+import wtfdb.core.data.DataByteArray;
+import wtfdb.core.data.DataChar;
+import wtfdb.core.data.DataDate;
+import wtfdb.core.data.DataDouble;
+import wtfdb.core.data.DataFloat;
+import wtfdb.core.data.DataInteger;
+import wtfdb.core.data.DataLong;
+import wtfdb.core.data.DataMap;
+import wtfdb.core.data.DataShort;
+import wtfdb.core.data.DataString;
+import wtfdb.core.data.DataVisitor;
 
 public class DataFormatter extends DataVisitor
 {

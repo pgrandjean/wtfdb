@@ -1,4 +1,4 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -183,5 +183,11 @@ public class DataMap extends Data<Map<String, Data<?>>>
     {
         v.parent = this;
         this.value.put(k, v);
+    }
+
+    @Override
+    public String toString()
+    {
+        return value == null? "{}" : value.toString();  
     }
 }

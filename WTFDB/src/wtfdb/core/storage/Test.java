@@ -9,10 +9,12 @@ import java.util.regex.Pattern;
 
 import org.junit.Assert;
 
-import wtfdb.core.data2.DataArray;
-import wtfdb.core.data2.DataMap;
+import wtfdb.core.data.DataArray;
+import wtfdb.core.data.DataMap;
 import wtfdb.core.io.IOBuffer;
-import wtfdb.core.operations.DataFormatter;
+import wtfdb.core.visitors.DataEmpty;
+import wtfdb.core.visitors.DataFormatter;
+import wtfdb.core.visitors.DataPaths;
 
 public class Test
 {
@@ -106,7 +108,7 @@ public class Test
         double time = 0.0;
         
         RandomAccessFile file = new RandomAccessFile("test.bin", "rw");
-        MappedByteBuffer mappedBuffer = file.getChannel().map(MapMode.READ_WRITE, 0, 1_024 * 1_024 * 1_024);
+        MappedByteBuffer mappedBuffer = file.getChannel().map(MapMode.READ_WRITE, 0, 200 * 1_024 * 1_024);
         IOBuffer buffer = new IOBuffer(mappedBuffer);
         Record rec = new Record();
         
@@ -162,6 +164,36 @@ public class Test
         
         System.out.println();
     }
+
+    // parse raw return raw
+    private void testPaths()
+    {
+        long startTime = 0L;
+        long endTime = 0L;
+        long elapsedTime = 0L;
+        long totalTime = 0L;
+        double time = 0.0;
+
+        DataPaths paths = new DataPaths();
+//      DataEmpty paths = new DataEmpty();
+        
+        for (int i = 0; i < 1000000; i++)
+        {   
+            paths.clear();
+            
+            startTime = System.nanoTime();
+            data0.accept(paths);
+            endTime = System.nanoTime();
+            
+            elapsedTime = endTime - startTime;
+            totalTime += elapsedTime;
+        }
+
+        System.out.println(paths.getPaths());
+        
+        time = (double) (totalTime);
+        System.out.println("paths time: " + time / 1000000 / 1000000);
+    }
     
     // parse raw return raw
     private void testResolver() throws IOException
@@ -198,6 +230,7 @@ public class Test
         System.out.println(null instanceof Object);
         Test test = new Test();
         test.testFormatter();
+        test.testPaths();
         test.testSerialization();
         test.testResolver();
         

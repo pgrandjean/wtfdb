@@ -1,13 +1,13 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
-public class DataFloat extends Data<Float>
+public class DataInteger extends Data<Integer>
 {
-    public DataFloat()
+    public DataInteger()
     {
         super();
     }
 
-    public DataFloat(float value)
+    public DataInteger(int value)
     {
         super(value);
     }
@@ -22,9 +22,9 @@ public class DataFloat extends Data<Float>
     public boolean equals(Object o)
     {
         if (o == this) return true;
-        if (!(o instanceof DataFloat)) return false;
+        if (!(o instanceof DataInteger)) return false;
         
-        DataFloat that = (DataFloat) o;
+        DataInteger that = (DataInteger) o;
         
         return this.value.equals(that.value);
     }

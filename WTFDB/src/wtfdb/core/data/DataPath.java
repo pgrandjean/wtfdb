@@ -1,64 +1,82 @@
 package wtfdb.core.data;
 
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class DataPath implements Comparable<DataPath>
 {
-    private class Exception extends RuntimeException
+    private DataPath root = null;
+    
+    private DataPath prev = null;
+    
+    private DataPath next = null;
+    
+    private Object key = null;
+    
+    private int size = 0;
+    
+    public DataPath(DataPath path, String key)
     {
-        private Exception(String what)
+        if (path.key == null)
         {
-            super(what);
+            this.root = this;
+            this.prev = null;
+            path.next = null;   
         }
+        else
+        {
+            this.root = path.root;
+            this.prev = path;
+            path.next = this;
+        }
+        
+        this.next = null;
+        this.key = key;
+        this.size = path.size + 1;
     }
     
-    private static final Pattern PATTERN_SIMPLE_KEY = Pattern.compile("\\w+");
-    
-    private static final Pattern PATTERN_ARRAY_KEY = Pattern.compile("(\\w+)\\[(\\d+)\\]");
-    
-    private Vector<Object> path = new Vector<>();
-
-    public DataPath(String path)
+    public DataPath(DataPath path, int key)
     {
-        init(path);
+        if (path.key == null)
+        {
+            this.root = this;
+            this.prev = null;
+            path.next = null;   
+        }
+        else
+        {
+            this.root = path.root;
+            this.prev = path;
+            path.next = this;
+        }
+        
+        this.next = null;
+        this.key = key;
+        this.size = path.size + 1;
     }
 
+    public DataPath(String key)
+    {
+        this.root = this;
+        this.prev = null;
+        this.next = null;
+        this.key = key;
+        this.size = 1;
+    }
+    
+    public DataPath(int key)
+    {
+        this.root = this;
+        this.prev = null;
+        this.next = null;
+        this.key = key;
+        this.size = 1;
+    }
+    
     public DataPath()
     {
-        init(null);
-    }
-    
-    private void init(String path)
-    {
-        if (path == null || "".equals(path)) return;
-        
-        String[] split = path.split("\\.");
-        for (String key : split)
-        {
-            Matcher matcher = PATTERN_SIMPLE_KEY.matcher(key);
-            if (matcher.matches())
-            {
-                this.path.add(key);
-            }
-            else
-            {
-                matcher = PATTERN_ARRAY_KEY.matcher(key);
-                if (matcher.matches())
-                {
-                    String arrayKey = matcher.group(1);
-                    String arrayIndex = matcher.group(2);
-                    
-                    this.path.add(arrayKey);
-                    this.path.add(Integer.valueOf(arrayIndex));
-                }
-                else
-                {
-                    throw new Exception("invalid path format: " + path + ", at: " + key);
-                }
-            }
-        }
+        this.root = null;
+        this.prev = null;
+        this.next = null;
+        this.key = null;
+        this.size = 0;
     }
     
     private void toString(StringBuffer buffer, Object o, boolean first)
@@ -78,68 +96,30 @@ public class DataPath implements Comparable<DataPath>
         }
     }
     
-    protected void add(String key)
-    {
-        path.add(key);
-    }
-    
-    protected void add(int index)
-    {
-        path.add(index);
-    }
-    
-    protected Object get(int i)
-    {
-        return path.get(i);
-    }
-
-    protected Object first()
-    {
-        return path.firstElement();
-    }
-    
-    protected Object dequeue()
-    {
-        int n = path.size();
-        if (n > 0)
-        {
-            return path.remove(0);
-        }
-        
-        return null;
-    }
-    
-    protected Object poll()
-    {
-        int n = path.size();
-        if (n > 0)
-        {
-            return path.remove(n - 1);
-        }
-        
-        return null;
-    }
-
     protected int size()
     {
-        return path.size();
+        return size;
     }
 
     @Override
     public int compareTo(DataPath that)
     {
         if (that == null) return 1;
+        else if (that == this) return 0;
         
-        int k = this.path.size();
-        int l = this.path.size();
+        int k = this.size;
+        int l = that.size;
             
         int i = 0;
         int j = 0;
-            
+
+        DataPath thisCurr = this.root;
+        DataPath thatCurr = that.root;
+        
         while (i < k && j < l)
         {
-            Object thisKey = this.path.get(i);
-            Object thatKey = that.path.get(i);
+            Object thisKey = thisCurr.key;
+            Object thatKey = thatCurr.key;
             
             if (thisKey.equals(thatKey))
             {
@@ -169,6 +149,9 @@ public class DataPath implements Comparable<DataPath>
                 // string and int
                 return 1;
             }
+            
+            thisCurr = thisCurr.next;
+            thatCurr = thatCurr.next;
         }
         
         return 0;
@@ -181,13 +164,16 @@ public class DataPath implements Comparable<DataPath>
         
         DataPath that = (DataPath) o;
         
-        int m = this.path.size(); 
-        if (that.path.size() != m) return false;
+        int m = this.size; 
+        if (that.size != m) return false;
+
+        DataPath thisCurr = this.root;
+        DataPath thatCurr = that.root;
         
         for (int i = 0; i < m; i++)
         {
-            Object thisKey = this.path.get(i);
-            Object thatKey = that.path.get(i);
+            Object thisKey = thisCurr.key;
+            Object thatKey = thatCurr.key;
             
             if (!thisKey.equals(thatKey)) return false;
         }
@@ -199,8 +185,13 @@ public class DataPath implements Comparable<DataPath>
     public int hashCode()
     {
         int hashcode = 1;
-        for (Object o : path)
+
+        DataPath curr = this.root;
+        int n = this.size;
+        
+        for (int i = 0; i < n; i++, curr = curr.next)
         {
+            Object o = curr.key;
             hashcode += 31 * hashcode + o.hashCode(); 
         }
         
@@ -211,19 +202,22 @@ public class DataPath implements Comparable<DataPath>
     {
         if (that == null) return false;
         
-        int k = this.path.size();
-        int l = that.path.size();
+        int k = this.size;
+        int l = that.size;
         
 //        if (k > 0 && l == 0) return false; 
 //        else if (k == 0 && l > 0 || k == 0 && l == 0) return true;
         
         int i = 0;
         int j = 0;
+
+        DataPath thisCurr = this.root;
+        DataPath thatCurr = that.root;
         
         while (i < k && j < l)
         {
-            Object thisKey = this.path.get(i);
-            Object thatKey = that.path.get(i);
+            Object thisKey = thisCurr.key;
+            Object thatKey = thatCurr.key;
             
             if (thisKey.equals(thatKey))
             {
@@ -248,6 +242,9 @@ public class DataPath implements Comparable<DataPath>
                 i++;
                 j += 2;
             }
+
+            thisCurr = thisCurr.next;
+            thatCurr = thatCurr.next;
         }
         
         return i == k || j == l;
@@ -257,13 +254,14 @@ public class DataPath implements Comparable<DataPath>
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
-        int n = path.size();
+        int n = size;
         
         if (n > 0)
         {
-            for (int i = 0; i < n; i++)
+            DataPath curr = this.root;
+            for (int i = 0; i < n; i++, curr = curr.next)
             {
-                Object o = path.get(i);
+                Object o = curr.key;
                 toString(buffer, o, i == 0);
             }
         }

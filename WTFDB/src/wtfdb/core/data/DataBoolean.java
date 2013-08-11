@@ -1,13 +1,13 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
-public class DataShort extends Data<Short>
+public class DataBoolean extends Data<Boolean>
 {
-    public DataShort()
+    public DataBoolean()
     {
         super();
     }
 
-    public DataShort(short value)
+    public DataBoolean(boolean value)
     {
         super(value);
     }
@@ -22,9 +22,9 @@ public class DataShort extends Data<Short>
     public boolean equals(Object o)
     {
         if (o == this) return true;
-        if (!(o instanceof DataShort)) return false;
+        if (!(o instanceof DataBoolean)) return false;
         
-        DataShort that = (DataShort) o;
+        DataBoolean that = (DataBoolean) o;
         
         return this.value.equals(that.value);
     }

@@ -1,15 +1,17 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
-public class DataLong extends Data<Long>
+public class DataString extends Data<String>
 {
-    public DataLong()
+    public DataString()
     {
         super();
     }
 
-    public DataLong(long value)
+    public DataString(String value)
     {
         super(value);
+        
+        if (value == null) throw new NullPointerException();
     }
 
     @Override
@@ -22,9 +24,9 @@ public class DataLong extends Data<Long>
     public boolean equals(Object o)
     {
         if (o == this) return true;
-        if (!(o instanceof DataLong)) return false;
+        if (!(o instanceof DataString)) return false;
         
-        DataLong that = (DataLong) o;
+        DataString that = (DataString) o;
         
         return this.value.equals(that.value);
     }

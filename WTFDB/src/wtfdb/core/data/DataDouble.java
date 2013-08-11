@@ -1,4 +1,4 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
 public class DataDouble extends Data<Double>
 {

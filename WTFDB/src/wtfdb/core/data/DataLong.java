@@ -1,13 +1,13 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
-public class DataInteger extends Data<Integer>
+public class DataLong extends Data<Long>
 {
-    public DataInteger()
+    public DataLong()
     {
         super();
     }
 
-    public DataInteger(int value)
+    public DataLong(long value)
     {
         super(value);
     }
@@ -22,9 +22,9 @@ public class DataInteger extends Data<Integer>
     public boolean equals(Object o)
     {
         if (o == this) return true;
-        if (!(o instanceof DataInteger)) return false;
+        if (!(o instanceof DataLong)) return false;
         
-        DataInteger that = (DataInteger) o;
+        DataLong that = (DataLong) o;
         
         return this.value.equals(that.value);
     }

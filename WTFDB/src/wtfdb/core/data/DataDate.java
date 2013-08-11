@@ -1,4 +1,4 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
 import java.util.Date;
 

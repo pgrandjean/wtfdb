@@ -1,13 +1,13 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
-public class DataByte extends Data<Byte>
+public class DataFloat extends Data<Float>
 {
-    public DataByte()
+    public DataFloat()
     {
         super();
     }
 
-    public DataByte(byte value)
+    public DataFloat(float value)
     {
         super(value);
     }
@@ -22,9 +22,9 @@ public class DataByte extends Data<Byte>
     public boolean equals(Object o)
     {
         if (o == this) return true;
-        if (!(o instanceof DataByte)) return false;
+        if (!(o instanceof DataFloat)) return false;
         
-        DataByte that = (DataByte) o;
+        DataFloat that = (DataFloat) o;
         
         return this.value.equals(that.value);
     }

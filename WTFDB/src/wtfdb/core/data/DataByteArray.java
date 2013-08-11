@@ -1,4 +1,4 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
 public class DataByteArray extends Data<byte[]>
 {
@@ -34,5 +34,11 @@ public class DataByteArray extends Data<byte[]>
         }
         
         return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return value == null? "<null>" : value.toString();  
     }
 }

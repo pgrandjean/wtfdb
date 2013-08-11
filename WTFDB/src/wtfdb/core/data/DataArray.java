@@ -1,4 +1,4 @@
-package wtfdb.core.data2;
+package wtfdb.core.data;
 
 import java.util.Date;
 import java.util.List;
@@ -199,5 +199,11 @@ public class DataArray extends Data<List<Data<?>>>
         DataArray that = (DataArray) o;
         
         return this.value.equals(that.value);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return value == null? "[]" : value.toString();  
     }
 }
