@@ -1,10 +1,12 @@
 package wtfdb.core.data;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-public class DataMap extends Data<Map<String, Data<?>>>
+public class DataMap extends Data<Map<String, Data<?>>> implements Iterable<Entry<String, Data<?>>>
 {
     public DataMap()
     {
@@ -185,9 +187,20 @@ public class DataMap extends Data<Map<String, Data<?>>>
         this.value.put(k, v);
     }
 
+    public int size()
+    {
+        return value.size();
+    }
+    
     @Override
     public String toString()
     {
         return value == null? "{}" : value.toString();  
+    }
+
+    @Override
+    public Iterator<Entry<String, Data<?>>> iterator()
+    {
+        return value.entrySet().iterator();
     }
 }

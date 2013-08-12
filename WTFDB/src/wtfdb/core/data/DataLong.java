@@ -1,6 +1,6 @@
 package wtfdb.core.data;
 
-public class DataLong extends Data<Long>
+public class DataLong extends DataPrimitive<Long>
 {
     public DataLong()
     {

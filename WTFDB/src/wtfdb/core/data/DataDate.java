@@ -2,7 +2,7 @@ package wtfdb.core.data;
 
 import java.util.Date;
 
-public class DataDate extends Data<Date>
+public class DataDate extends DataPrimitive<Date>
 {
     public DataDate()
     {

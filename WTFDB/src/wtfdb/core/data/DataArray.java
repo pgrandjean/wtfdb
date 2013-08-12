@@ -26,7 +26,7 @@ public class DataArray extends Data<List<Data<?>>>
     {
         if (i >= value.size()) return null;
         
-        Data<T> v = (Data<T>) value.get(i);
+        Data<T> v = (Data<T>) at(i);
         
         return v.value;
     }
@@ -113,6 +113,11 @@ public class DataArray extends Data<List<Data<?>>>
     public void clear()
     {
         value.clear();
+    }
+    
+    public Data<?> at(int i)
+    {
+        return value.get(i);
     }
     
     public Boolean getBoolean(int i)

@@ -143,7 +143,7 @@ public class DataFormatter extends DataVisitor
         int n = data.size();
         for (int i = 0; i < n; i++)
         {
-            data.get().get(i).accept(this);
+            data.at(i).accept(this);
             
             if (i != n - 1)
             {
@@ -188,10 +188,10 @@ public class DataFormatter extends DataVisitor
             buffer.append(' ');
         }
         
-        int n = data.get().size();
+        int n = data.size();
         int i = 0;
         
-        for (Entry<String, Data<?>> entry : data.get().entrySet())
+        for (Entry<String, Data<?>> entry : data)
         {
             buffer.append('"').append(entry.getKey()).append("\": ");
             entry.getValue().accept(this);

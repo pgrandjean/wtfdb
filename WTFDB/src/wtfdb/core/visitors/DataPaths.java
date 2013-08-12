@@ -112,7 +112,7 @@ public class DataPaths extends DataVisitor
         for (int i = 0; i < n; i++)
         {
             this.path = new DataPath(curr, i);
-            data.get().get(i).accept(this);
+            data.at(i).accept(this);
         }
         
         this.path = curr;
@@ -123,7 +123,7 @@ public class DataPaths extends DataVisitor
     {
         DataPath curr = this.path == null? new DataPath() : this.path;
         
-        for (Entry<String, Data<?>> entry : data.get().entrySet())
+        for (Entry<String, Data<?>> entry : data)
         {
             this.path = new DataPath(curr, entry.getKey());
             entry.getValue().accept(this);

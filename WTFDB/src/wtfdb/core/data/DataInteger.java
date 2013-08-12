@@ -1,6 +1,6 @@
 package wtfdb.core.data;
 
-public class DataInteger extends Data<Integer>
+public class DataInteger extends DataPrimitive<Integer>
 {
     public DataInteger()
     {

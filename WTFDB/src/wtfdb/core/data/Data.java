@@ -35,19 +35,6 @@ public abstract class Data<T>
 
     public abstract void accept(DataVisitor visitor);
 
-    public T get()
-    {
-        return value;
-    }
-    
-    public void set(T value)
-    {
-        this.value = value;
-    }
-
     @Override
-    public String toString()
-    {
-        return value == null? "<null>" : value.toString();
-    }
+    public abstract String toString();
 }

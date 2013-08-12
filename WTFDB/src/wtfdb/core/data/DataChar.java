@@ -1,6 +1,6 @@
 package wtfdb.core.data;
 
-public class DataChar extends Data<Character>
+public class DataChar extends DataPrimitive<Character>
 {
     public DataChar()
     {

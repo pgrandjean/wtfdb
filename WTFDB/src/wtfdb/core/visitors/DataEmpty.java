@@ -92,14 +92,14 @@ public class DataEmpty extends DataVisitor
         int n = data.size();
         for (int i = 0; i < n; i++)
         {
-            data.get().get(i).accept(this);
+            data.at(i).accept(this);
         }
     }
 
     @Override
     public void visit(DataMap data)
     {
-        for (Entry<String, Data<?>> entry : data.get().entrySet())
+        for (Entry<String, Data<?>> entry : data)
         {
             entry.getValue().accept(this);
         }

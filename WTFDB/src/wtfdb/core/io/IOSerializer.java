@@ -110,12 +110,12 @@ public class IOSerializer extends DataVisitor
     {
         buffer.writeByte(IOTypes.ARRAY);
         
-        int n = data.get().size();
+        int n = data.size();
         buffer.writeInt(n);
         
         for (int i = 0; i < n; i++)
         {
-            data.get().get(i).accept(this);
+            data.at(i).accept(this);
         }
     }
 
@@ -124,10 +124,10 @@ public class IOSerializer extends DataVisitor
     {
         buffer.writeByte(IOTypes.DATA);
         
-        int n = data.get().size();
+        int n = data.size();
         buffer.writeInt(n);
         
-        for (Entry<String, Data<?>> entry : data.get().entrySet())
+        for (Entry<String, Data<?>> entry : data)
         {
             buffer.writeUTF(entry.getKey());
             entry.getValue().accept(this);

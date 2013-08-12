@@ -69,8 +69,8 @@ public class TestDataPath
         DataPath path1 = new DataPath("tata");
         path1 = new DataPath(path1, "tete");
 
-        Assert.assertTrue(path0.equals(path1));
-        Assert.assertTrue(path1.equals(path0));
+        Assert.assertTrue(!path0.equals(path1));
+        Assert.assertTrue(!path1.equals(path0));
     }
 
     @Test

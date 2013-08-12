@@ -1,6 +1,6 @@
 package wtfdb.core.data;
 
-public class DataDouble extends Data<Double>
+public class DataDouble extends DataPrimitive<Double>
 {
     public DataDouble()
     {

@@ -1,6 +1,6 @@
 package wtfdb.core.data;
 
-public class DataString extends Data<String>
+public class DataString extends DataPrimitive<String>
 {
     public DataString()
     {

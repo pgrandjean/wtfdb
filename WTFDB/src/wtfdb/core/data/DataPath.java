@@ -1,82 +1,75 @@
 package wtfdb.core.data;
 
+import java.util.Stack;
+
 public class DataPath implements Comparable<DataPath>
 {
-    private DataPath root = null;
-    
     private DataPath prev = null;
-    
-    private DataPath next = null;
     
     private Object key = null;
     
     private int size = 0;
     
-    public DataPath(DataPath path, String key)
+    private int hashcode = 0;
+    
+    public DataPath(DataPath prev, String key)
     {
-        if (path.key == null)
-        {
-            this.root = this;
-            this.prev = null;
-            path.next = null;   
-        }
-        else
-        {
-            this.root = path.root;
-            this.prev = path;
-            path.next = this;
-        }
+        boolean prevnull = prev.key == null;
+        int hashcode = key.hashCode();
         
-        this.next = null;
+        this.prev = prevnull? null : prev;
         this.key = key;
-        this.size = path.size + 1;
+        this.size = prevnull? 1 : prev.size + 1;
+        this.hashcode = prevnull? hashcode : 31 * prev.hashcode + hashcode;
     }
     
-    public DataPath(DataPath path, int key)
+    public DataPath(DataPath prev, int key)
     {
-        if (path.key == null)
-        {
-            this.root = this;
-            this.prev = null;
-            path.next = null;   
-        }
-        else
-        {
-            this.root = path.root;
-            this.prev = path;
-            path.next = this;
-        }
+        boolean prevnull = prev.key == null;
+        int hashcode = Integer.valueOf(key).hashCode();
         
-        this.next = null;
+        this.prev = prevnull? null : prev;
         this.key = key;
-        this.size = path.size + 1;
+        this.size = prevnull? 1 : prev.size + 1;
+        this.hashcode = prevnull? hashcode : 31 * prev.hashcode + hashcode;
     }
 
     public DataPath(String key)
     {
-        this.root = this;
         this.prev = null;
-        this.next = null;
         this.key = key;
         this.size = 1;
+        this.hashcode = key.hashCode();
     }
     
     public DataPath(int key)
     {
-        this.root = this;
         this.prev = null;
-        this.next = null;
         this.key = key;
         this.size = 1;
+        this.hashcode = Integer.valueOf(key).hashCode();
     }
     
     public DataPath()
     {
-        this.root = null;
         this.prev = null;
-        this.next = null;
         this.key = null;
         this.size = 0;
+        this.hashcode = 0;
+    }
+    
+    private Stack<DataPath> toStack()
+    {
+        Stack<DataPath> stack = new Stack<>();
+        DataPath curr = this;
+        
+        do
+        {
+            stack.add(curr);
+        }
+        while ((curr = curr.prev) != null);
+        
+        return stack;
     }
     
     private void toString(StringBuffer buffer, Object o, boolean first)
@@ -113,13 +106,13 @@ public class DataPath implements Comparable<DataPath>
         int i = 0;
         int j = 0;
 
-        DataPath thisCurr = this.root;
-        DataPath thatCurr = that.root;
+        Stack<DataPath> thisStack = this.toStack();
+        Stack<DataPath> thatStack = that.toStack();
         
         while (i < k && j < l)
         {
-            Object thisKey = thisCurr.key;
-            Object thatKey = thatCurr.key;
+            Object thisKey = thisStack.pop().key;
+            Object thatKey = thatStack.pop().key;
             
             if (thisKey.equals(thatKey))
             {
@@ -149,9 +142,6 @@ public class DataPath implements Comparable<DataPath>
                 // string and int
                 return 1;
             }
-            
-            thisCurr = thisCurr.next;
-            thatCurr = thatCurr.next;
         }
         
         return 0;
@@ -167,13 +157,13 @@ public class DataPath implements Comparable<DataPath>
         int m = this.size; 
         if (that.size != m) return false;
 
-        DataPath thisCurr = this.root;
-        DataPath thatCurr = that.root;
+        Stack<DataPath> thisStack = this.toStack();
+        Stack<DataPath> thatStack = that.toStack();
         
         for (int i = 0; i < m; i++)
         {
-            Object thisKey = thisCurr.key;
-            Object thatKey = thatCurr.key;
+            Object thisKey = thisStack.pop().key;
+            Object thatKey = thatStack.pop().key;
             
             if (!thisKey.equals(thatKey)) return false;
         }
@@ -184,17 +174,6 @@ public class DataPath implements Comparable<DataPath>
     @Override
     public int hashCode()
     {
-        int hashcode = 1;
-
-        DataPath curr = this.root;
-        int n = this.size;
-        
-        for (int i = 0; i < n; i++, curr = curr.next)
-        {
-            Object o = curr.key;
-            hashcode += 31 * hashcode + o.hashCode(); 
-        }
-        
         return hashcode;
     }
     
@@ -205,19 +184,16 @@ public class DataPath implements Comparable<DataPath>
         int k = this.size;
         int l = that.size;
         
-//        if (k > 0 && l == 0) return false; 
-//        else if (k == 0 && l > 0 || k == 0 && l == 0) return true;
-        
         int i = 0;
         int j = 0;
 
-        DataPath thisCurr = this.root;
-        DataPath thatCurr = that.root;
+        Stack<DataPath> thisStack = this.toStack();
+        Stack<DataPath> thatStack = that.toStack();
         
         while (i < k && j < l)
         {
-            Object thisKey = thisCurr.key;
-            Object thatKey = thatCurr.key;
+            Object thisKey = thisStack.pop().key;
+            Object thatKey = thatStack.pop().key;
             
             if (thisKey.equals(thatKey))
             {
@@ -242,9 +218,6 @@ public class DataPath implements Comparable<DataPath>
                 i++;
                 j += 2;
             }
-
-            thisCurr = thisCurr.next;
-            thatCurr = thatCurr.next;
         }
         
         return i == k || j == l;
@@ -258,10 +231,11 @@ public class DataPath implements Comparable<DataPath>
         
         if (n > 0)
         {
-            DataPath curr = this.root;
-            for (int i = 0; i < n; i++, curr = curr.next)
+            Stack<DataPath> stack = this.toStack();
+            
+            for (int i = 0; i < n; i++)
             {
-                Object o = curr.key;
+                Object o = stack.pop().key;
                 toString(buffer, o, i == 0);
             }
         }

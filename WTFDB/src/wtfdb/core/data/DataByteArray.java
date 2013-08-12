@@ -1,6 +1,6 @@
 package wtfdb.core.data;
 
-public class DataByteArray extends Data<byte[]>
+public class DataByteArray extends DataPrimitive<byte[]>
 {
     public DataByteArray()
     {

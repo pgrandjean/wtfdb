@@ -1,6 +1,6 @@
 package wtfdb.core.data;
 
-public class DataBoolean extends Data<Boolean>
+public class DataBoolean extends DataPrimitive<Boolean>
 {
     public DataBoolean()
     {
