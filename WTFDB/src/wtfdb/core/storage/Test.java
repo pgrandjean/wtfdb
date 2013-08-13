@@ -71,6 +71,11 @@ public class Test
         data1.set("data", subData1);
     }
 
+    private String formatTime(String prefix, double nano)
+    {
+        return prefix + nano / 1_000_000 + " ms, tps: " + 1_000_000_000 / nano;
+    }
+    
     private DataMap newData()
     {
         // data0
@@ -112,7 +117,8 @@ public class Test
         IOBuffer buffer = new IOBuffer(mappedBuffer);
         Record rec = new Record();
         
-        for (int i = 0; i < 1000000; i++)
+        int n = 1_000_000;
+        for (int i = 0; i < n; i++)
         {   
             startTime = System.nanoTime();
             rec.serialize(buffer, data0);
@@ -123,7 +129,7 @@ public class Test
         }
         
         time = (double) (totalTime);
-        System.out.println("serialization time: " + time / 1000000 / 1000000);
+        System.out.println(formatTime("serialization time: ", time / n));
         System.out.println(buffer.position());
 
         mappedBuffer.clear();
@@ -141,7 +147,7 @@ public class Test
         }
         
         time = (double) (totalTime);
-        System.out.println("deserialization time: " + time / 1000000 / 1000000);
+        System.out.println(formatTime("deserialization time: ", time / n));
         
         Assert.assertTrue(data0.equals(data1));
         
