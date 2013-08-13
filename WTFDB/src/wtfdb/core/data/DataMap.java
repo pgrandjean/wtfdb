@@ -116,7 +116,7 @@ public class DataMap extends Data<Map<String, Data<?>>> implements Iterable<Entr
 
     public void set(String k, Data<?> v)
     {
-        v.parent = v;
+        v.parent = this;
         value.put(k, v);
     }
 
