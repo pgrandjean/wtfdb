@@ -15,6 +15,8 @@ import wtfdb.core.io.IOBuffer;
 import wtfdb.core.visitors.DataEmpty;
 import wtfdb.core.visitors.DataFormatter;
 import wtfdb.core.visitors.DataPaths;
+import wtfdb.cstorage.Collection;
+import wtfdb.cstorage.DB;
 
 public class Test
 {
@@ -154,6 +156,36 @@ public class Test
         mappedBuffer.force();
         file.close();
     }
+
+    private void testSerialization2() throws Exception
+    {
+        long startTime = 0L;
+        long endTime = 0L;
+        long elapsedTime = 0L;
+        long totalTime = 0L;
+        double time = 0.0;
+        
+        DB db = new DB("toto");
+        Collection collection = db.getCollection("tata");
+        
+        int n = 1_000_000; int i = 0;
+        for (i = 0; i < n; i++)
+        {   
+            startTime = System.nanoTime();
+            collection.create(data0);
+            endTime = System.nanoTime();
+            
+            elapsedTime = endTime - startTime;
+            totalTime += elapsedTime;
+        }
+        
+        collection.read(null, null);
+        
+        time = (double) (totalTime);
+        System.out.println(formatTime("serialization time: ", time / n));
+        
+        db.close();
+    }
     
     private String path = "data";
     private String path2 = "list";
@@ -195,10 +227,10 @@ public class Test
             totalTime += elapsedTime;
         }
 
-        System.out.println(paths.getPaths());
+        System.out.println(paths.getColumns());
         
         time = (double) (totalTime);
-        System.out.println("paths time: " + time / 1000000 / 1000000);
+        System.out.println(formatTime("paths time: ", time / 1_000_000));
     }
     
     // parse raw return raw
@@ -238,6 +270,7 @@ public class Test
         test.testFormatter();
         test.testPaths();
         test.testSerialization();
+        test.testSerialization2();
         test.testResolver();
         
         Pattern keyPattern = Pattern.compile("(\\w+)\\[(\\d+)\\]");

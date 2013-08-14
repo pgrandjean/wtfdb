@@ -74,19 +74,26 @@ public class DataPath implements Comparable<DataPath>
     
     private void toString(StringBuffer buffer, Object o, boolean first)
     {
-        if (o.getClass() == Integer.class)
+//        if (o.getClass() == Integer.class)
+//        {
+//            buffer.append('[').append((Integer) o).append(']');
+//        }
+//        else
+//        {
+//            if (!first)
+//            {
+//                buffer.append('.');
+//            }
+//            
+//            buffer.append((String) o);
+//        }
+        
+        if (!first)
         {
-            buffer.append('[').append((Integer) o).append(']');
+            buffer.append('.');
         }
-        else
-        {
-            if (!first)
-            {
-                buffer.append('.');
-            }
-            
-            buffer.append((String) o);
-        }
+        
+        buffer.append(o);
     }
     
     protected int size()

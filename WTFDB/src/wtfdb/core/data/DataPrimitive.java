@@ -33,6 +33,12 @@ public abstract class DataPrimitive<T> extends Data<T>
     }
 
     @Override
+    public int hashCode()
+    {
+        return value == null? 0 : value.hashCode();
+    }
+    
+    @Override
     public String toString()
     {
         return value == null? "<null>" : value.toString();

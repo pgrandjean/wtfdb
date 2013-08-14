@@ -2,31 +2,33 @@ package wtfdb.core.io;
 
 public class IOTypes
 {
-    protected static final byte BOOLEAN = 0;
+    public static final byte BOOLEAN = 0;
     
-    protected static final byte BYTE = 1;
+    public static final byte BYTE = 1;
     
-    protected static final byte SHORT = 2;
+    public static final byte SHORT = 2;
     
-    protected static final byte INTEGER = 3;
+    public static final byte INTEGER = 3;
     
-    protected static final byte LONG = 4;
+    public static final byte LONG = 4;
     
-    protected static final byte FLOAT = 5;
+    public static final byte FLOAT = 5;
     
-    protected static final byte DOUBLE = 6;
+    public static final byte DOUBLE = 6;
     
-    protected static final byte CHAR = 7;
+    public static final byte CHAR = 7;
     
-    protected static final byte STRING = 8;
+    public static final byte STRING = 8;
 
-    protected static final byte BYTE_ARRAY = 9;
+    public static final byte BYTE_ARRAY = 9;
     
-    protected static final byte DATE = 10;
+    public static final byte DATE = 10;
     
-    protected static final byte ARRAY = 11;
+    public static final byte ARRAY = 11;
     
-    protected static final byte DATA = 12;
+    public static final byte DATA = 12;
+    
+    public static final byte EOF = 13;
     
     private IOTypes()
     {

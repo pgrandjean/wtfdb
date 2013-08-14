@@ -29,12 +29,15 @@ public abstract class Data<T>
         this.value = value;
         this.parent = parent;
     }
-    
-    @Override
-    public abstract boolean equals(Object o);
 
     public abstract void accept(DataVisitor visitor);
 
+    @Override
+    public abstract boolean equals(Object o);
+
+    @Override
+    public abstract int hashCode();
+    
     @Override
     public abstract String toString();
 }

@@ -205,6 +205,12 @@ public class DataArray extends Data<List<Data<?>>>
         
         return this.value.equals(that.value);
     }
+
+    @Override
+    public int hashCode()
+    {
+        return value == null? 0 : value.hashCode();
+    }
     
     @Override
     public String toString()

@@ -33,17 +33,6 @@ public class DataMap extends Data<Map<String, Data<?>>> implements Iterable<Entr
         value.clear();
     }
     
-    @Override
-    public boolean equals(Object o)
-    {
-        if (o == this) return true;
-        if (!(o instanceof DataMap)) return false;
-        
-        DataMap that = (DataMap) o;
-        
-        return this.value.equals(that.value);
-    }
-
     public Boolean getBoolean(String k)
     {
         return get(k);
@@ -191,16 +180,33 @@ public class DataMap extends Data<Map<String, Data<?>>> implements Iterable<Entr
     {
         return value.size();
     }
-    
+
     @Override
-    public String toString()
+    public boolean equals(Object o)
     {
-        return value == null? "{}" : value.toString();  
+        if (o == this) return true;
+        if (!(o instanceof DataMap)) return false;
+        
+        DataMap that = (DataMap) o;
+        
+        return this.value.equals(that.value);
     }
 
+    @Override
+    public int hashCode()
+    {
+        return value == null? 0 : value.hashCode();
+    }
+    
     @Override
     public Iterator<Entry<String, Data<?>>> iterator()
     {
         return value.entrySet().iterator();
+    }
+
+    @Override
+    public String toString()
+    {
+        return value == null? "{}" : value.toString();  
     }
 }

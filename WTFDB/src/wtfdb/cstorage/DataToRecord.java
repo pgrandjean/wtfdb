@@ -1,7 +1,5 @@
-package wtfdb.core.visitors;
+package wtfdb.cstorage;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import wtfdb.core.data.Data;
@@ -21,86 +19,86 @@ import wtfdb.core.data.DataShort;
 import wtfdb.core.data.DataString;
 import wtfdb.core.data.DataVisitor;
 
-public class DataPaths extends DataVisitor
+public class DataToRecord extends DataVisitor
 {
-    private Map<DataPath, Data<?>> paths = new LinkedHashMap<>();
+    private Record record = new Record();
     
     private DataPath path = null;
     
     public void clear()
     {
-        paths.clear();
+        record.clear();
     }
     
-    public Map<DataPath, Data<?>> getColumns()
+    public Record getRecord()
     {
-        return paths;
+        return record;
     }
     
     @Override
     public void visit(DataBoolean data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataByte data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataShort data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataInteger data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataLong data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataFloat data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataDouble data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataChar data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataString data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataByteArray data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
     public void visit(DataDate data)
     {
-        paths.put(path, data);
+        record.set(path, data);
     }
 
     @Override
