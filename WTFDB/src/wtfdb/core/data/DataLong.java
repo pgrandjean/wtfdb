@@ -2,7 +2,7 @@ package wtfdb.core.data;
 
 public class DataLong extends DataPrimitive<Long>
 {
-    public DataLong()
+    protected DataLong()
     {
         super();
     }

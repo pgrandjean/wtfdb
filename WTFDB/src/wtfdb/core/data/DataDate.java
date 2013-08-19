@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class DataDate extends DataPrimitive<Date>
 {
-    public DataDate()
+    protected DataDate()
     {
         super();
     }

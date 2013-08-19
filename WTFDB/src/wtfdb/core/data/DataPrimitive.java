@@ -27,11 +27,6 @@ public abstract class DataPrimitive<T> extends Data<T>
         return value;
     }
     
-    public void set(T value)
-    {
-        this.value = value;
-    }
-
     @Override
     public int hashCode()
     {

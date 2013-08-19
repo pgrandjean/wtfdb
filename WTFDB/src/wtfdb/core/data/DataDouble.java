@@ -2,7 +2,7 @@ package wtfdb.core.data;
 
 public class DataDouble extends DataPrimitive<Double>
 {
-    public DataDouble()
+    protected DataDouble()
     {
         super();
     }

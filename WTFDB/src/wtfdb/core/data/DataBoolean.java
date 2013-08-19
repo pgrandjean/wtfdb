@@ -2,7 +2,7 @@ package wtfdb.core.data;
 
 public class DataBoolean extends DataPrimitive<Boolean>
 {
-    public DataBoolean()
+    protected DataBoolean()
     {
         super();
     }

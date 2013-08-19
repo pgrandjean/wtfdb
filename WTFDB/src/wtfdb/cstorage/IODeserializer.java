@@ -56,48 +56,87 @@ public class IODeserializer extends DataVisitor
             switch (type)
             {
                 case IOTypes.BOOLEAN:
-                    data = new DataBoolean();
+                {
+                    boolean value = buffer.readBoolean();
+                    data = new DataBoolean(value);
                     break;
+                }
                 
                 case IOTypes.BYTE:
-                    data = new DataByte();
+                {
+                    byte value = buffer.readByte();
+                    data = new DataByte(value);
                     break;
+                }
                 
                 case IOTypes.SHORT:
-                    data = new DataShort();
+                {
+                    short value = buffer.readShort();
+                    data = new DataShort(value);
                     break;
+                }
                 
                 case IOTypes.INTEGER:
-                    data = new DataInteger();
+                {
+                    int value = buffer.readInt();
+                    data = new DataInteger(value);
                     break;
+                }
                 
                 case IOTypes.LONG:
-                    data = new DataLong();
+                {
+                    long value = buffer.readLong();
+                    data = new DataLong(value);
                     break;
+                }
                 
                 case IOTypes.FLOAT:
-                    data = new DataFloat();
+                {
+                    float value = buffer.readFloat();
+                    data = new DataFloat(value);
                     break;
+                }
                 
                 case IOTypes.DOUBLE:
-                    data = new DataDouble();
+                {
+                    double value = buffer.readDouble();
+                    data = new DataDouble(value);
                     break;
+                }
                 
                 case IOTypes.CHAR:
-                    data = new DataChar();
+                {
+                    char value = buffer.readChar();
+                    data = new DataChar(value);
                     break;
+                }
                 
                 case IOTypes.STRING:
-                    data = new DataString();
+                {
+                    String value = buffer.readUTF();
+                    data = new DataString(value);
                     break;
+                }
 
                 case IOTypes.BYTE_ARRAY:
-                    data = new DataByteArray();
+                {
+                    int n = buffer.readInt();
+                    
+                    byte[] value = new byte[n];
+                    buffer.readFully(value);
+                    
+                    data = new DataByteArray(value);
                     break;
+                }
                 
                 case IOTypes.DATE:
-                    data = new DataDate();
+                {
+                    long date = buffer.readLong();
+                    Date value = new Date(date);
+                    
+                    data = new DataDate(value);
                     break;
+                }
                 
                 case IOTypes.ARRAY:
                     data = new DataArray();
@@ -126,72 +165,67 @@ public class IODeserializer extends DataVisitor
     @Override
     public void visit(DataBoolean data)
     {
-        data.set(buffer.readBoolean());
+        
     }
 
     @Override
     public void visit(DataByte data)
     {
-        data.set(buffer.readByte());
+        
     }
 
     @Override
     public void visit(DataShort data)
     {
-        data.set(buffer.readShort());
+        
     }
 
     @Override
     public void visit(DataInteger data)
     {
-        data.set(buffer.readInt());
+        
     }
 
     @Override
     public void visit(DataLong data)
     {
-        data.set(buffer.readLong());
+        
     }
 
     @Override
     public void visit(DataFloat data)
     {
-        data.set(buffer.readFloat());
+        
     }
 
     @Override
     public void visit(DataDouble data)
     {
-        data.set(buffer.readDouble());
+        
     }
 
     @Override
     public void visit(DataChar data)
     {
-        data.set(buffer.readChar());
+        
     }
 
     @Override
     public void visit(DataString data)
     {
-        data.set(buffer.readUTF());
+        
     }
 
     @Override
     public void visit(DataByteArray data)
     {
-        int n = buffer.readInt();
         
-        byte[] b = new byte[n];
-        buffer.readFully(b);
-        
-        data.set(b);
     }
 
     @Override
     public void visit(DataDate data)
     {
-        data.set(new Date(buffer.readLong()));
+        
     }
 
     @Override

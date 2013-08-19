@@ -2,7 +2,7 @@ package wtfdb.core.data;
 
 public class DataFloat extends DataPrimitive<Float>
 {
-    public DataFloat()
+    protected DataFloat()
     {
         super();
     }

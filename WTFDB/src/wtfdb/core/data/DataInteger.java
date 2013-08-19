@@ -2,7 +2,7 @@ package wtfdb.core.data;
 
 public class DataInteger extends DataPrimitive<Integer>
 {
-    public DataInteger()
+    protected DataInteger()
     {
         super();
     }
