@@ -1,67 +1,31 @@
 package wtfdb.core.storage;
 
-import java.io.IOException;
-
 import wtfdb.core.data.DataMap;
-import wtfdb.core.io.IOBuffer;
-import wtfdb.core.io.IODeserializer;
-import wtfdb.core.io.IOSerializer;
 
 public class Record
 {
-    private boolean init = false;
+    protected Collection collection = null;
     
-    private boolean valid = false;
+    protected Record prev = null;
     
-    private int start = -1;
+    protected Record next = null;
     
-    private int end = -1;
+    protected int pos = -1;
     
-    public void serialize(IOBuffer buffer, DataMap data) throws IOException
+    protected Record(Record prev, Collection collection, DataMap data)
     {
-        valid = true;
-
-        start = buffer.position();
-        buffer.writeBoolean(valid);
-        buffer.writeInt(0);
+        this.collection = collection;
+        this.prev = prev;
+        this.pos = collection.buffer.position();
         
-        IOSerializer serializer = new IOSerializer(buffer);
-        serializer.visit(data);
+        if (prev != null) prev.next = this;
         
-        end = buffer.position();
-        buffer.writeInt(start + 1, end);
+        collection.serializer.visit(data);
     }
     
-    public void deserialize(IOBuffer buffer) throws IOException
+    protected DataMap deserialize()
     {
-        deserialize(buffer, false);
-    }
-    
-    public DataMap deserialize(IOBuffer buffer, boolean full) throws IOException
-    {
-        if (!init)
-        {
-            start = buffer.position();
-            valid = buffer.readBoolean();
-            end = buffer.readInt();
-            
-            buffer.position(end);
-            init = true;
-        }
-        
-        if (full)
-        {
-            if (valid)
-            {
-                buffer.position(start + 5);
-                    
-                IODeserializer deserializer = new IODeserializer(buffer);
-                DataMap data = (DataMap) deserializer.visit();
-                    
-                return data;
-            }
-        }
-        
-        return null;
+        collection.buffer.position(pos);
+        return (DataMap) collection.deserializer.visit();
     }
 }

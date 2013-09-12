@@ -22,9 +22,12 @@ public class IODeserializer extends DataVisitor
 {
     private IOBuffer buffer = null;
     
-    public IODeserializer(IOBuffer buffer)
+    private IODictionary dictionary = null;
+    
+    public IODeserializer(IOBuffer buffer, IODictionary dictionary)
     {
         this.buffer = buffer;
+        this.dictionary = dictionary;
     }
 
     public Data<?> visit()
@@ -120,20 +123,20 @@ public class IODeserializer extends DataVisitor
             case IOTypes.ARRAY:
             {
                 data = new DataArray();
+                data.accept(this);
                 break;
             }
             
             case IOTypes.DATA:
             {
                 data = new DataMap();
+                data.accept(this);
                 break;
             }
             
             default:
                 throw new IOException("unknown data type: " + type);
         }
-
-        data.accept(this);
         
         return data;
     }
@@ -221,8 +224,11 @@ public class IODeserializer extends DataVisitor
         int n = buffer.readInt();        
         for (int i = 0; i < n; i++)
         {
-            String key = buffer.readUTF();
+            short id = buffer.readShort();
             Data<?> value = visit();
+            
+            String key = dictionary.getString(id);
+            
             data.set(key, value);
         }
     }

@@ -2,16 +2,55 @@ package wtfdb.core.io;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
 
 public class IOBuffer implements DataInput, DataOutput
 {
-    private ByteBuffer buffer = null;
+    private RandomAccessFile file = null;
     
-    public IOBuffer(ByteBuffer buffer)
+    private FileChannel channel = null;
+    
+    private MappedByteBuffer buffer = null;
+        
+    public IOBuffer(String filename)
     {
-        this.buffer = buffer;
+        try
+        {
+            this.file = new RandomAccessFile(filename, "rw");
+            this.channel = file.getChannel();
+            this.buffer = this.channel.map(MapMode.READ_WRITE, 0, 200 * 1_024 * 1_024);
+        }
+        catch (java.io.IOException e)
+        {
+            throw new IOException("could not open file: " + filename, e);
+        }
+    }
+    
+    public void clear()
+    {
+        buffer.clear();
+    }
+    
+    public void close()
+    {
+        try
+        {
+            buffer.force();
+            channel.close();
+            file.close();
+            
+            buffer = null;
+            channel = null;
+            file = null;
+        }
+        catch (java.io.IOException e)
+        {
+            throw new IOException("could not close file: " + file, e);
+        }
     }
     
     public int position()

@@ -72,30 +72,6 @@ public class DataPath implements Comparable<DataPath>
         return stack;
     }
     
-    private void toString(StringBuffer buffer, Object o, boolean first)
-    {
-//        if (o.getClass() == Integer.class)
-//        {
-//            buffer.append('[').append((Integer) o).append(']');
-//        }
-//        else
-//        {
-//            if (!first)
-//            {
-//                buffer.append('.');
-//            }
-//            
-//            buffer.append((String) o);
-//        }
-        
-        if (!first)
-        {
-            buffer.append('.');
-        }
-        
-        buffer.append(o);
-    }
-    
     protected int size()
     {
         return size;
@@ -243,10 +219,30 @@ public class DataPath implements Comparable<DataPath>
             for (int i = 0; i < n; i++)
             {
                 Object o = stack.pop().key;
-                toString(buffer, o, i == 0);
+                
+                if (i != 0) buffer.append('.');
+                
+                buffer.append(o);
             }
         }
         
         return buffer.toString();
+    }
+    
+    public static DataPath valueOf(String s)
+    {
+        if (s == null) return null;
+        else if (s.matches("\\w+[\\w\\.]*")) return null;
+        
+        DataPath path = null;
+        String[] keys = s.split("\\,");
+        
+        for (int i = 0; i < keys.length; i++)
+        {
+            if (keys[i].matches("\\d+")) path = new DataPath(path, Integer.valueOf(keys[i]));
+            else path = new DataPath(path, keys[i]);
+        }
+        
+        return path;
     }
 }

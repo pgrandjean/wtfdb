@@ -15,8 +15,6 @@ import wtfdb.core.io.IOBuffer;
 import wtfdb.core.visitors.DataEmpty;
 import wtfdb.core.visitors.DataFormatter;
 import wtfdb.core.visitors.DataPaths;
-import wtfdb.cstorage.Collection;
-import wtfdb.cstorage.DB;
 
 public class Test
 {
@@ -114,16 +112,14 @@ public class Test
         long totalTime = 0L;
         double time = 0.0;
         
-        RandomAccessFile file = new RandomAccessFile("test.bin", "rw");
-        MappedByteBuffer mappedBuffer = file.getChannel().map(MapMode.READ_WRITE, 0, 200 * 1_024 * 1_024);
-        IOBuffer buffer = new IOBuffer(mappedBuffer);
-        Record rec = new Record();
+        DB db = new DB("test");
+        Collection col = db.getCollection("test");
         
         int n = 1_000_000;
         for (int i = 0; i < n; i++)
         {   
             startTime = System.nanoTime();
-            rec.serialize(buffer, data0);
+            col.create(data0);
             endTime = System.nanoTime();
             
             elapsedTime = endTime - startTime;
@@ -132,16 +128,13 @@ public class Test
         
         time = (double) (totalTime);
         System.out.println(formatTime("serialization time: ", time / n));
-        System.out.println(buffer.position());
 
-        mappedBuffer.clear();
         totalTime = 0L;
 
-        data1 = new DataMap();
         for (int i = 0; i < 1000000; i++)
         {   
             startTime = System.nanoTime();
-            data1 = rec.deserialize(buffer, true);
+            data1 = col.readNext();
             endTime = System.nanoTime();
             
             elapsedTime = endTime - startTime;
@@ -152,39 +145,36 @@ public class Test
         System.out.println(formatTime("deserialization time: ", time / n));
         
         Assert.assertTrue(data0.equals(data1));
-        
-        mappedBuffer.force();
-        file.close();
     }
 
     private void testSerialization2() throws Exception
     {
-        long startTime = 0L;
-        long endTime = 0L;
-        long elapsedTime = 0L;
-        long totalTime = 0L;
-        double time = 0.0;
-        
-        DB db = new DB("toto");
-        Collection collection = db.getCollection("tata");
-        
-        int n = 1_000_000; int i = 0;
-        for (i = 0; i < n; i++)
-        {   
-            startTime = System.nanoTime();
-            collection.create(data0);
-            endTime = System.nanoTime();
-            
-            elapsedTime = endTime - startTime;
-            totalTime += elapsedTime;
-        }
-        
-        collection.read(null, null);
-        
-        time = (double) (totalTime);
-        System.out.println(formatTime("serialization time: ", time / n));
-        
-        db.close();
+//        long startTime = 0L;
+//        long endTime = 0L;
+//        long elapsedTime = 0L;
+//        long totalTime = 0L;
+//        double time = 0.0;
+//        
+//        DB db = new DB("toto");
+//        Collection collection = db.getCollection("tata");
+//        
+//        int n = 1_000_000; int i = 0;
+//        for (i = 0; i < n; i++)
+//        {   
+//            startTime = System.nanoTime();
+//            collection.create(data0);
+//            endTime = System.nanoTime();
+//            
+//            elapsedTime = endTime - startTime;
+//            totalTime += elapsedTime;
+//        }
+//        
+//        collection.read(null, null);
+//        
+//        time = (double) (totalTime);
+//        System.out.println(formatTime("serialization time: ", time / n));
+//        
+//        db.close();
     }
     
     private String path = "data";
@@ -265,6 +255,8 @@ public class Test
      */
     public static void main(String[] args) throws Exception
     {
+        while (System.in.read() != '\n');
+        
         System.out.println(null instanceof Object);
         Test test = new Test();
         test.testFormatter();
