@@ -19,103 +19,90 @@ import wtfdb.core.data.DataShort;
 import wtfdb.core.data.DataString;
 import wtfdb.core.data.DataVisitor;
 
-public class IOSerializer extends DataVisitor
+public class IODataSizer extends DataVisitor
 {
-    private IOBuffer buffer = null;
+    private int size = 0;
     
-    private IODictionary dictionary = null;
-
-    public IOSerializer(IOBuffer buffer, IODictionary dictionary)
+    public int size(DataMap data)
     {
-        this.buffer = buffer;
-        this.dictionary = dictionary;
+        size = 0;
+        visit(data);
+        
+        return size;
     }
     
     @Override
     public void visit(DataBoolean data)
     {
-        buffer.writeByte(IOTypes.BOOLEAN);
-        buffer.writeBoolean(data.get());
+        size += IOTypes.SIZE[IOTypes.BOOLEAN];
     }
 
     @Override
     public void visit(DataByte data)
     {   
-        buffer.writeByte(IOTypes.BYTE);
-        buffer.writeByte(data.get());
+        size += IOTypes.SIZE[IOTypes.BYTE];
     }
 
     @Override
     public void visit(DataShort data)
     {   
-        buffer.writeByte(IOTypes.SHORT);
-        buffer.writeShort(data.get());
+        size += IOTypes.SIZE[IOTypes.SHORT];
     }
 
     @Override
     public void visit(DataInteger data)
     {
-        buffer.writeByte(IOTypes.INTEGER);
-        buffer.writeInt(data.get());
+        size += IOTypes.SIZE[IOTypes.INTEGER];
     }
 
     @Override
     public void visit(DataLong data)
     {
-        buffer.writeByte(IOTypes.LONG);
-        buffer.writeLong(data.get());
+        size += IOTypes.SIZE[IOTypes.LONG];
     }
 
     @Override
     public void visit(DataFloat data)
     {   
-        buffer.writeByte(IOTypes.FLOAT);
-        buffer.writeFloat(data.get());
+        size += IOTypes.SIZE[IOTypes.FLOAT];
     }
 
     @Override
     public void visit(DataDouble data)
     {   
-        buffer.writeByte(IOTypes.DOUBLE);
-        buffer.writeDouble(data.get());
+        size += IOTypes.SIZE[IOTypes.DOUBLE];
     }
 
     @Override
     public void visit(DataChar data)
     {   
-        buffer.writeByte(IOTypes.CHAR);
-        buffer.writeChar(data.get());
+        size += IOTypes.SIZE[IOTypes.CHAR];
     }
 
     @Override
     public void visit(DataString data)
     {   
-        buffer.writeByte(IOTypes.STRING);
-        buffer.writeUTF(data.get());
+        size += IOTypes.SIZE[IOTypes.STRING] + data.getUTF8().length;
     }
 
     @Override
     public void visit(DataByteArray data)
     {   
-        buffer.writeByte(IOTypes.BYTE_ARRAY);
-        buffer.writeInt(data.get().length);
-        buffer.write(data.get());
+        size += IOTypes.SIZE[IOTypes.BYTE_ARRAY] + data.get().length;
     }
 
     @Override
     public void visit(DataDate data)
     {   
-        buffer.writeByte(IOTypes.DATE);
-        buffer.writeLong(data.get().getTime());
+        size += IOTypes.SIZE[IOTypes.DATE];
     }
 
     @Override
     public void visit(DataArray data)
     {
         int n = data.size();
-        
-        buffer.writeByte(IOTypes.ARRAY);
-        buffer.writeInt(n);
+
+        size += IOTypes.SIZE[IOTypes.ARRAY];
         
         for (int i = 0; i < n; i++)
         {
@@ -126,28 +113,21 @@ public class IOSerializer extends DataVisitor
     @Override
     public void visit(DataMap data)
     {
-        int n = data.size();
-        
-        buffer.writeByte(IOTypes.DATA);
-        buffer.writeInt(n);
+        size += IOTypes.SIZE[IOTypes.DATA];
         
         for (Entry<String, Data<?>> entry : data)
         {
-            String key = entry.getKey();
             Data<?> value = entry.getValue();
             
-            short id = dictionary.getKey(key);
-            buffer.writeShort(id);
+            size += IOTypes.SIZE[IOTypes.SHORT];
             
             value.accept(this);
         }
     }
 
     @Override
-    public void visit(DataId data)
+    public void visit(DataId iData)
     {
-        buffer.writeByte(IOTypes.ID);
-        buffer.writeLong(data.getDate());
-        buffer.writeByte(data.getId());
+        size += IOTypes.SIZE[IOTypes.ID];
     }
 }

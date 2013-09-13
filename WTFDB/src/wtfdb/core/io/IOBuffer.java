@@ -16,6 +16,8 @@ public class IOBuffer implements DataInput, DataOutput
     
     private MappedByteBuffer buffer = null;
         
+    private int written = 0;
+    
     public IOBuffer(String filename)
     {
         try
@@ -55,7 +57,11 @@ public class IOBuffer implements DataInput, DataOutput
     
     public int position()
     {
-        return buffer.position();
+        int pos = buffer.position();
+        
+        written = Math.max(written, pos);
+        
+        return pos;
     }
     
     public void position(int position)
@@ -275,5 +281,10 @@ public class IOBuffer implements DataInput, DataOutput
         {
             throw new IOException("could not read string", e);
         }
+    }
+    
+    public int written()
+    {
+        return written;
     }
 }

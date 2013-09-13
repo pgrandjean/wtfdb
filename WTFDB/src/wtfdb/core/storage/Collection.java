@@ -1,7 +1,9 @@
 package wtfdb.core.storage;
 
+import wtfdb.core.data.DataId;
 import wtfdb.core.data.DataMap;
 import wtfdb.core.io.IOBuffer;
+import wtfdb.core.io.IODataSizer;
 import wtfdb.core.io.IODeserializer;
 import wtfdb.core.io.IODictionary;
 import wtfdb.core.io.IOSerializer;
@@ -15,6 +17,8 @@ public class Collection
     protected IODictionary dictionary = null;
     
     protected IOBuffer buffer = null;
+    
+    protected IODataSizer datasize = null;
     
     protected IOSerializer serializer = null;
     
@@ -32,6 +36,7 @@ public class Collection
         this.name = name;
         this.dictionary = new IODictionary(db.name, name);
         this.buffer = new IOBuffer(db.name + "." + name + ".data.wtfdb");
+        this.datasize = new IODataSizer();
         this.serializer = new IOSerializer(this.buffer, this.dictionary);
         this.deserializer = new IODeserializer(this.buffer, this.dictionary);
     }
@@ -59,6 +64,9 @@ public class Collection
     
     public void create(DataMap data)
     {
+        DataId id = data.getDataId();
+        if (id == null) data.setId(DataId.newInstance());
+        
         Record record = new Record(first, this, data);
         
         if (first == null) first = record;

@@ -98,6 +98,11 @@ public class DataMap extends Data<Map<String, Data<?>>> implements Iterable<Entr
         return (DataMap) value.get(k);
     }
     
+    public DataId getDataId()
+    {
+        return (DataId) value.get("_id");
+    }
+    
     public void remove(String k)
     {
         value.remove(k); 
@@ -174,6 +179,11 @@ public class DataMap extends Data<Map<String, Data<?>>> implements Iterable<Entr
     {
         v.parent = this;
         this.value.put(k, v);
+    }
+    
+    public void setId(DataId v)
+    {
+        set("_id", v);
     }
 
     public int size()

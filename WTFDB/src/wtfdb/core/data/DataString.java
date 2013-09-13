@@ -1,5 +1,7 @@
 package wtfdb.core.data;
 
+import java.io.UnsupportedEncodingException;
+
 public class DataString extends DataPrimitive<String>
 {
     protected DataString()
@@ -29,5 +31,17 @@ public class DataString extends DataPrimitive<String>
         DataString that = (DataString) o;
         
         return this.value.equals(that.value);
+    }
+    
+    public byte[] getUTF8()
+    {
+        try
+        {
+            return value.getBytes("UTF-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            return null;
+        }
     }
 }

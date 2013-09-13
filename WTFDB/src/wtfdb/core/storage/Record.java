@@ -12,6 +12,12 @@ public class Record
     
     protected int pos = -1;
     
+    protected Record(Record that)
+    {
+        this.collection = that.collection;
+        this.pos = that.pos;
+    }
+    
     protected Record(Record prev, Collection collection, DataMap data)
     {
         this.collection = collection;
@@ -29,3 +35,4 @@ public class Record
         return (DataMap) collection.deserializer.visit();
     }
 }
+    

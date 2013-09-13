@@ -13,6 +13,7 @@ import wtfdb.core.data.DataChar;
 import wtfdb.core.data.DataDate;
 import wtfdb.core.data.DataDouble;
 import wtfdb.core.data.DataFloat;
+import wtfdb.core.data.DataId;
 import wtfdb.core.data.DataInteger;
 import wtfdb.core.data.DataLong;
 import wtfdb.core.data.DataMap;
@@ -130,5 +131,11 @@ public class DataPaths extends DataVisitor
         }
         
         this.path = curr;
+    }
+
+    @Override
+    public void visit(DataId data)
+    {
+        paths.put(path, data);
     }
 }

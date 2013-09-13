@@ -27,4 +27,6 @@ public abstract class DataVisitor
     public abstract void visit(DataArray data);
     
     public abstract void visit(DataMap data);
+    
+    public abstract void visit(DataId data);
 }

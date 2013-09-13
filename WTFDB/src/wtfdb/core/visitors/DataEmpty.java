@@ -11,6 +11,7 @@ import wtfdb.core.data.DataChar;
 import wtfdb.core.data.DataDate;
 import wtfdb.core.data.DataDouble;
 import wtfdb.core.data.DataFloat;
+import wtfdb.core.data.DataId;
 import wtfdb.core.data.DataInteger;
 import wtfdb.core.data.DataLong;
 import wtfdb.core.data.DataMap;
@@ -103,5 +104,11 @@ public class DataEmpty extends DataVisitor
         {
             entry.getValue().accept(this);
         }
+    }
+    
+    @Override
+    public void visit(DataId data)
+    {
+        
     }
 }
