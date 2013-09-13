@@ -194,8 +194,9 @@ public class DataMap extends Data<Map<String, Data<?>>> implements Iterable<Entr
     @Override
     public boolean equals(Object o)
     {
+        if (o == null) return false;
         if (o == this) return true;
-        if (!(o instanceof DataMap)) return false;
+        if (o.getClass() != DataMap.class) return false;
         
         DataMap that = (DataMap) o;
         

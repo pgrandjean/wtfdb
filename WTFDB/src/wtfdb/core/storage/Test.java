@@ -255,7 +255,8 @@ public class Test
      */
     public static void main(String[] args) throws Exception
     {
-        while (System.in.read() != '\n');
+        boolean pause = false;
+        while (pause && System.in.read() != '\n');
         
         System.out.println(null instanceof Object);
         Test test = new Test();

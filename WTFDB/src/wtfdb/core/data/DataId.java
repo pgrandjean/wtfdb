@@ -13,6 +13,12 @@ public class DataId extends Data<Long>
         
     }
     
+    public DataId(long date, byte id)
+    {
+        this.date = date;
+        this.id = id;
+    }
+    
     public static DataId newInstance()
     {
         DataId dataId = new DataId();

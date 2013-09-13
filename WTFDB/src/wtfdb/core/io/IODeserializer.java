@@ -135,6 +135,15 @@ public class IODeserializer extends DataVisitor
                 break;
             }
             
+            case IOTypes.ID:
+            {
+                long date = buffer.readLong();
+                byte id = buffer.readByte();
+                
+                data = new DataId(date, id);
+                break;
+            }
+            
             default:
                 throw new IOException("unknown data type: " + type);
         }
